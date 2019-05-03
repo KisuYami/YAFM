@@ -1,6 +1,8 @@
 #include <ncurses.h>
-#include "main.h"
+#include <stdlib.h>
+#include <unistd.h>
 #include "dir.h"
+#include "main.h"
 #include "display.h"
 
 void setupScr() {
@@ -15,12 +17,21 @@ int main() {
 	setupScr();
 
 	int listLenght;
+	char key;
+	char pwd[100];
 	char *list[255];
 
-	listLenght = listFiles(list);
-	displayFiles(list, listLenght);
+	getcwd(pwd, sizeof(pwd)); /**< Get working dir */
+	pwd[sizeof(pwd) - 1] = '\0';
 
-	getch();
+	listLenght = listFiles(list);
+
+	while((key = getch()) != 'q') {
+
+		displayFiles(list, listLenght);
+		displayDirPath(pwd);
+	}
+
 	endwin();
 	return 0;
 }
