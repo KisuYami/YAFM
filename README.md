@@ -8,15 +8,15 @@ Like ranger, but worse, and in C.
     - user    <0m0.007s
     - sys     <0m0.002s
 
-+ Ranger:
-    - real    <0m3.110s
-    - user    <0m0.787s
-    - sys     <0m0.146s
-
 + LF:
     - real    <0m0.324s
     - user    <0m0.068s
     - sys     <0m0.035s
+
++ Ranger:
+    - real    <0m3.110s
+    - user    <0m0.787s
+    - sys     <0m0.146s
 
 !! THIS TIMES REFLECT IN MY REFLEX TOO, SE FOR YOURSELF !!
 
