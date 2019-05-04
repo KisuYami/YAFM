@@ -20,4 +20,21 @@ Like ranger, but worse, and in C.
 
 !! THOSE TIMES REFLECT ON MY REFLEX TOO, SEE FOR YOURSELF !!
 
+## TODO:
+
++ Add Actions:
+    - Delete Files;
+    - Move Files;
+    - Select Files;
+    - Show/Hide Hidden(easy)
+
++ Add Features:
+    - Plain File Preview;
+    - Use in external Source
+
++ Non Features:
+    - No image preview;
+    - No video preview;
+    - No pdf preview
+
 !! THIS VERSION IS NOT USABLE, STILL IN DEVELOPMENT !!
