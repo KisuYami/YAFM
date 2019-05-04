@@ -2,6 +2,8 @@
 
 Like ranger, but worse, and in C.
 
+![example](./show.png)
+
 ## Load Times
 + YAFM:
     - real    <0m0.061s
