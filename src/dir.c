@@ -35,14 +35,8 @@ char *cdEnter(const char state[], const char text[]) { // Works
 
 	return result;
 }
-/*
-char *cdBack(const char path[]) { // Don't do that, is wrong, but work
 
-	char *newPath = cdEnter(path, "../");
-	return newPath;
-}
-*/
-char *cdBack(char path[]) { // Don't work
+char *cdBack(char path[]) { // Work
 
 	int i, f;
 	char *newPath = calloc(1, sizeof(*path));
