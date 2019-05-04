@@ -35,31 +35,34 @@ char *cdEnter(const char state[], const char text[]) { // Works
 
 	return result;
 }
+/*
 char *cdBack(const char path[]) { // Don't do that, is wrong, but work
 
 	char *newPath = cdEnter(path, "../");
 	return newPath;
 }
-/*
-char *cdBack(const char path[]) { // Don't work
+*/
+char *cdBack(char path[]) { // Don't work
 
-	int i, f, z;
-	char *newPath = calloc(25, 255);
+	int i, f;
+	char *newPath = calloc(1, sizeof(*path));
 
-	while(path[i] != '\0') {
+	newPath = path;
+	i = strlen(newPath) - 2;
 
-		if(path[i] == '/')
-			f = 0;
+	while(i >= 0) {
 
-		newPath[z] = path[i];
-		z++;
-		f++;
-		i++;
+		if(newPath[i] == '/') {
+			newPath[i] = '\0';
+			break;
+		}
+
+		else {
+			newPath[i] = '\0';
+			i--;
+		}
 	}
 
-	newPath = realloc(newPath, (sizeof(*path)) + 1);
-	//newPath[sizeof(newPath)] = '\0';
-
+	newPath = realloc(newPath, (sizeof(*newPath)) + 2);
 	return newPath;
 }
-*/

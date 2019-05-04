@@ -26,6 +26,9 @@ $(BUILD_DIR)/%.c.o: %.c
 clean:
 	$(RM) -r $(BUILD_DIR)
 
+install: $(BUILD_DIR)/$(TARGET_EXEC)
+	cp ${BUILD_DIR}/${TARGET_EXEC} /bin/.
+
 -include $(DEPS)
 
 MKDIR_P ?= mkdir -p

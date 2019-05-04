@@ -30,7 +30,7 @@ int main() {
 	char *list[255];
 	char *newPwd = "nada";
 
-	getcwd(pwd, sizeof(pwd)); /**< Get working dir */
+	getcwd(pwd, sizeof(pwd));
 	pwd[sizeof(pwd) - 1] = '\0';
 	cursor = 0;
 
