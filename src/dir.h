@@ -6,4 +6,6 @@
   @author Reberti Soares
   @date 03-05-2019
   */
-int listFiles(char *l[255]);
+int listFiles(char *l[255], char *cwd);
+char *cdEnter(const char state[], const char text[]);
+char *cdBack(const char path[]);
