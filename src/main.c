@@ -41,17 +41,11 @@ int main() {
 
 	while((key = getch()) != 'q') {
 
-		if(key == MOV_DOWN) {
+		if(key == MOV_DOWN && cursor < (listLenght - 1))
 			cursor++;
-			if(cursor < 0 || cursor > (listLenght - 1))
-				cursor--;
-		}
 
-		if(key == MOV_UP) {
+		if(key == MOV_UP && cursor > 0)
 			cursor--;
-			if(cursor < 0 || cursor > listLenght)
-				cursor++;
-		}
 
 		if(key == MOV_RIGHT) {
 			newPwd = cdEnter(newPwd, list[cursor]);
