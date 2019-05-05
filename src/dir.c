@@ -84,7 +84,7 @@ int openFile(const char path[]) {
 
 	int i, p;
 	char *file = malloc(256);
-	char *command = malloc(sizeof(*path) + 1);
+	char *command = malloc(sizeof(*path) + 255);
 
 	i = strlen(path);
 	p = 0;
@@ -112,6 +112,8 @@ int openFile(const char path[]) {
 			strcat(command, " '");
 			strcat(command, path);
 			strcat(command, "'");
+			strcat(command, " &>/dev/null"); // No terminal output
+			strcat(command, " &");
 			system(command);
 			return 1;
 		}
