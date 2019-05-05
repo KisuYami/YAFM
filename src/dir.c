@@ -19,13 +19,13 @@ int listFiles(char *l[255], char *cwd) {
 
 	if(d) {
 		while((dir = readdir(d)) != NULL) {
-			if(*dir->d_name != '.' && hidden == 0) { // Don't Show hidden files
+			if(*dir->d_name != '.') { // Don't Show hidden files
 				l[i] = dir->d_name;
 				i++;
-			} if(hidden == 1) { // Show hidden files: don't work
+			/*} if(hidden == 1) { // Show hidden files: don't work
 				l[i] = dir->d_name;
 				i++;
-			}
+			*/}
 		}
 
 		closedir(d);
@@ -123,11 +123,15 @@ int openFile(const char path[]) {
 	return 0;
 }
 
-void bulkRename(char path[]) {
+void editorActions(char path[], char file[], char especial[]) {
 
-	char *command = malloc(sizeof(*path) + 19);
-	strcpy(command, "nvim -c Renamer '");
+	char *command = malloc(sizeof(*path) + sizeof(*file) + sizeof(*especial) + 25);
+	strcpy(command, "nvim ");
+	strcat(command, especial);
+	strcat(command, " '");
 	strcat(command, path);
+	strcat(command, "/");
+	strcat(command, file);
 	strcat(command, "'");
 	system(command);
 	free(command);

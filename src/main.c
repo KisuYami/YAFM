@@ -42,7 +42,10 @@ int main() {
 	while((key = getch()) != 'q') {
 
 		if(key == BULK_RENAME)
-			bulkRename(newPwd);
+			editorActions(newPwd, "", "-c Renamer");
+
+		if(key == OPEN_EDITOR)
+			editorActions(newPwd, list[cursor], "");
 
 		if(key == MOV_DOWN && cursor < (listLenght - 1))
 			cursor++;
@@ -52,13 +55,11 @@ int main() {
 
 		if(key == MOV_RIGHT) {
 			newPwd = cdEnter(newPwd, list[cursor]);
-			listLenght = listFiles(list, newPwd);
 			cursor = (cursor < (listLenght - 1)) ? cursor : 0;
 		}
 
 		if(key == MOV_LEFT) {
 			newPwd = cdBack(newPwd);
-			listLenght = listFiles(list, newPwd);
 			cursor = (cursor < (listLenght - 1)) ? cursor : 0;
 		}
 
