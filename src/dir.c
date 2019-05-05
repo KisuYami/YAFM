@@ -121,3 +121,12 @@ int openFile(const char path[]) {
 
 	return 0;
 }
+
+void bulkRename(char path[]) {
+
+	char *command = malloc(sizeof(*path) + 19);
+	strcpy(command, "nvim -c Renamer '");
+	strcat(command, path);
+	strcat(command, "'");
+	system(command);
+}

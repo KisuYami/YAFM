@@ -41,11 +41,8 @@ int main() {
 
 	while((key = getch()) != 'q') {
 
-		if(key == SHOW_HIDDEN)
-			hidden = 1;
-
-		if(key == HIDE_HIDDEN)
-			hidden = 0;
+		if(key == BULK_RENAME)
+			bulkRename(newPwd);
 
 		if(key == MOV_DOWN && cursor < (listLenght - 1))
 			cursor++;

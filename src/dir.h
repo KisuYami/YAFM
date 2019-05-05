@@ -11,3 +11,4 @@ int is_regular_file(const char *path);
 int listFiles(char *l[255], char *cwd);
 char *cdBack(char path[]);
 char *cdEnter(const char state[], const char text[]);
+void bulkRename(char path[]);
