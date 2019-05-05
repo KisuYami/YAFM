@@ -33,13 +33,13 @@ int listFiles(char *l[255], char *cwd) {
 	return i;
 }
 
-int is_regular_file(const char *path) {
-    struct stat path_stat;
-    stat(path, &path_stat);
-    return S_ISREG(path_stat.st_mode);
+int isFile(const char *path) {
+    struct stat path_to_file;
+    stat(path, &path_to_file);
+    return S_ISREG(path_to_file.st_mode);
 }
 
-char *cdEnter(char state[], const char text[]) { // Works
+char *cdEnter(char state[], const char text[]) {
 
 	char *result = malloc(strlen(state) + strlen(text) + 1);
 
@@ -47,7 +47,7 @@ char *cdEnter(char state[], const char text[]) { // Works
 	strcat(result, "/");
 	strcat(result, text);
 
-	if(is_regular_file(result) == 1) {
+	if(isFile(result) == 1) {
 		openFile(result);
 		return state; // A real free one
 	}
@@ -55,7 +55,7 @@ char *cdEnter(char state[], const char text[]) { // Works
 	return result;
 }
 
-char *cdBack(char path[]) { // Work
+char *cdBack(char path[]) {
 
 	int i;
 	char *newPath = malloc(sizeof(*path) + 1);
@@ -123,7 +123,7 @@ int openFile(const char path[]) {
 	return 0;
 }
 
-void editorActions(char path[], char file[], char especial[]) {
+void editorActions(char path[], char file[], char special[]) {
 
 	char *command = malloc(sizeof(*path) +
 			sizeof(*file) + sizeof(*especial) + 25);

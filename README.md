@@ -22,20 +22,26 @@ Like ranger, but worse, and in C.
 
 !! THOSE TIMES REFLECT ON MY REFLEX TOO, SEE FOR YOURSELF !!
 
+## Install
+
+    make
+    sudo make install
+
 ## TODO:
 
 + Add Features:
     - [ ] Plain File Preview;
     - [x] Use in external Source(not 100% working, but do the job).
+    - [x] Bulk Rename.
     - [ ] Delete Files;
     - [ ] Move Files;
     - [ ] Select Files;
     - [ ] Show/Hide Hidden(easy)
 
 + Non Features:
-    - [ ] No image preview;
-    - [ ] No video preview;
-    - [ ] No pdf preview
+    - [x] No image preview;
+    - [x] No video preview;
+    - [x] No pdf preview
 
 ## Know Issues
 
