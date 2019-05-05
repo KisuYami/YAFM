@@ -6,6 +6,8 @@
   @author Reberti Soares
   @date 03-05-2019
   */
+int openFile(const char path[]);
+int is_regular_file(const char *path);
 int listFiles(char *l[255], char *cwd);
+char *cdBack(char path[]);
 char *cdEnter(const char state[], const char text[]);
-char *cdBack(const char path[]);

@@ -1,4 +1,5 @@
 #include <ncurses.h>
+#include "dir.h"
 
 void displayFiles(char *list[255], int lenght, int cursor) {
 
@@ -7,6 +8,10 @@ void displayFiles(char *list[255], int lenght, int cursor) {
 			attron(A_STANDOUT | COLOR_PAIR(1));
 			mvprintw(i+1, 3, "%s", list[i]);
 			attroff(A_STANDOUT | COLOR_PAIR(1));
+		} else if(is_regular_file(list[i]) == 1) {
+			attron(A_BOLD | COLOR_PAIR(3));
+			mvprintw(i+1, 3, "%s", list[i]);
+			attroff(A_BOLD | COLOR_PAIR(3));
 		}
 		else
 			mvprintw(i+1, 3, "%s", list[i]);

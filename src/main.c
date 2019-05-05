@@ -17,6 +17,7 @@ void setupScr() {
 	//Colors
 	init_pair(1, COLOR_RED, COLOR_BLACK);
 	init_pair(2, COLOR_CYAN, COLOR_BLACK);
+	init_pair(3, COLOR_BLUE, COLOR_BLACK);
 }
 
 int main() {
@@ -35,9 +36,9 @@ int main() {
 	cursor = 0;
 
 	listLenght = listFiles(list, ".");
-	displayDirPath(pwd);
-	displayFiles(list, listLenght, 0);
 	newPwd = cdEnter(pwd, "");
+	displayDirPath(newPwd);
+	displayFiles(list, listLenght, 0);
 
 	while((key = getch()) != 'q') {
 
@@ -64,7 +65,6 @@ int main() {
 		displayFiles(list, listLenght, cursor);
 	}
 
-	free(newPwd);
 	endwin();
 	return 0;
 }

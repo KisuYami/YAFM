@@ -6,4 +6,20 @@
 #define MOV_DOWN 'j'
 #define MOV_UP 'k'
 
+
+#define TYPES 9
+static const struct files_extensions {
+	const char *program;
+	const char *extension;
+} files_extensions[] = {
+	{ "mpv", ".mp4" },
+	{ "mpv", ".avi" },
+	{ "mpv", ".mkv" },
+	{ "sxiv", ".jpg" },
+	{ "sxiv", ".png" },
+	{ "sxiv", ".jpeg" },
+	{ "zathura", ".pdf" },
+	{ "zathura", ".zip" } // Baka (o_o)
+};
+
 #endif
