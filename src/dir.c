@@ -19,7 +19,10 @@ int listFiles(char *l[255], char *cwd) {
 
 	if(d) {
 		while((dir = readdir(d)) != NULL) {
-			if(*dir->d_name != '.') { // Don't Show hidden files
+			if(*dir->d_name != '.' && hidden == 0) { // Don't Show hidden files
+				l[i] = dir->d_name;
+				i++;
+			} if(hidden == 1) { // Show hidden files: don't work
 				l[i] = dir->d_name;
 				i++;
 			}
@@ -38,7 +41,6 @@ int is_regular_file(const char *path) {
 
 char *cdEnter(const char state[], const char text[]) { // Works
 
-
 	char *result = malloc(strlen(state) + strlen(text) + 1);
 
 	strcpy(result, state);
@@ -47,7 +49,7 @@ char *cdEnter(const char state[], const char text[]) { // Works
 
 	if(is_regular_file(result) == 1) {
 		openFile(result);
-		return state; //A real free one
+		return state; // A real free one
 	}
 
 	return result;
@@ -110,9 +112,7 @@ int openFile(const char path[]) {
 			strcat(command, " '");
 			strcat(command, path);
 			strcat(command, "'");
-			//strcat(command, " &");
 			system(command);
-			free(command);
 			return 1;
 		}
 	}

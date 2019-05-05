@@ -12,8 +12,7 @@ void setupScr() {
 	initscr();
 	cbreak();
         noecho();
-	curs_set(0);
-	start_color();
+	curs_set(0); start_color();
 	//Colors
 	init_pair(1, COLOR_RED, COLOR_BLACK);
 	init_pair(2, COLOR_CYAN, COLOR_BLACK);
@@ -42,6 +41,12 @@ int main() {
 
 	while((key = getch()) != 'q') {
 
+		if(key == SHOW_HIDDEN)
+			hidden = 1;
+
+		if(key == HIDE_HIDDEN)
+			hidden = 0;
+
 		if(key == MOV_DOWN && cursor < (listLenght - 1))
 			cursor++;
 
@@ -51,17 +56,18 @@ int main() {
 		if(key == MOV_RIGHT) {
 			newPwd = cdEnter(newPwd, list[cursor]);
 			listLenght = listFiles(list, newPwd);
-			cursor = 0;
+			cursor = (cursor < (listLenght - 1)) ? cursor : 0;
 		}
 
 		if(key == MOV_LEFT) {
 			newPwd = cdBack(newPwd);
 			listLenght = listFiles(list, newPwd);
-			cursor = 0;
+			cursor = (cursor < (listLenght - 1)) ? cursor : 0;
 		}
 
 		clear();
 		displayDirPath(newPwd);
+		listLenght = listFiles(list, newPwd);
 		displayFiles(list, listLenght, cursor);
 	}
 

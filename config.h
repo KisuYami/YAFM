@@ -5,7 +5,10 @@
 #define MOV_RIGHT 'l'
 #define MOV_DOWN 'j'
 #define MOV_UP 'k'
+#define SHOW_HIDDEN 'z'
+#define HIDE_HIDDEN 'Z'
 
+static int hidden = 0;
 
 #define TYPES 9
 static const struct files_extensions {
