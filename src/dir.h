@@ -10,5 +10,5 @@ int openFile(const char path[]);
 int is_regular_file(const char *path);
 int listFiles(char *l[255], char *cwd);
 char *cdBack(char path[]);
-char *cdEnter(const char state[], const char text[]);
+char *cdEnter(char state[], const char text[]);
 void editorActions(char path[], char file[], char especial[]);

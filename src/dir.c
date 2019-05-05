@@ -39,7 +39,7 @@ int is_regular_file(const char *path) {
     return S_ISREG(path_stat.st_mode);
 }
 
-char *cdEnter(const char state[], const char text[]) { // Works
+char *cdEnter(char state[], const char text[]) { // Works
 
 	char *result = malloc(strlen(state) + strlen(text) + 1);
 
@@ -84,7 +84,7 @@ int openFile(const char path[]) {
 
 	int i, p;
 	char *file = malloc(256);
-	char *command = malloc(sizeof(*path) + 255);
+	char *command = malloc(sizeof(*path) + 1024);
 
 	i = strlen(path);
 	p = 0;
@@ -125,7 +125,9 @@ int openFile(const char path[]) {
 
 void editorActions(char path[], char file[], char especial[]) {
 
-	char *command = malloc(sizeof(*path) + sizeof(*file) + sizeof(*especial) + 25);
+	char *command = malloc(sizeof(*path) +
+			sizeof(*file) + sizeof(*especial) + 25);
+
 	strcpy(command, "nvim ");
 	strcat(command, especial);
 	strcat(command, " '");
