@@ -115,6 +115,7 @@ int openFile(const char path[]) {
 			strcat(command, " &>/dev/null"); // No terminal output
 			strcat(command, " &");
 			system(command);
+			free(command);
 			return 1;
 		}
 	}
@@ -129,4 +130,5 @@ void bulkRename(char path[]) {
 	strcat(command, path);
 	strcat(command, "'");
 	system(command);
+	free(command);
 }
