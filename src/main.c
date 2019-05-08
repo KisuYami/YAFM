@@ -63,6 +63,9 @@ int main() {
 			cursor = (cursor < (listLenght - 1)) ? cursor : 0;
 		}
 
+		if(cursor > listLenght || cursor < 0)
+			cursor = 0;
+
 		clear();
 		displayDirPath(newPwd);
 		listLenght = listFiles(list, newPwd);

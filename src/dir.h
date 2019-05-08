@@ -4,7 +4,7 @@
   This code make the core functions like enter and exiting folders, using
   editing files, and opening files with external source.
   */
-/** @fn int openFile(const char path[]);
+/** @fn int openFile(char path[], const char text[])
   @brief Open file with defined programs
 
   This function get the path of file as argument, and test the

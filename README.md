@@ -43,11 +43,4 @@ Like ranger, but worse, and in C.
     - [x] No video preview;
     - [x] No pdf preview
 
-## Know Issues
-
-Some folders will try to fool you, go back one folder, and in one.
-
-Some times the program will try to operate inside a file(like as with a folder),
-go back, move up donw the cursor, and you will be all good.
-
 !! THIS VERSION IS NOT USABLE, STILL IN DEVELOPMENT !!

@@ -41,7 +41,7 @@ int isFile(const char *path) {
 
 char *cdEnter(char state[], const char text[]) {
 
-	char *result = malloc(strlen(state) + strlen(text) + 1);
+	char *result = malloc(strlen(state) + strlen(text) + 1024);
 
 	strcpy(result, state);
 	strcat(result, "/");
