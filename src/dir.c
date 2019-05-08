@@ -126,10 +126,10 @@ int openFile(const char path[]) {
 void editorActions(char path[], char file[], char special[]) {
 
 	char *command = malloc(sizeof(*path) +
-			sizeof(*file) + sizeof(*especial) + 25);
+			sizeof(*file) + sizeof(*special) + 25);
 
 	strcpy(command, "nvim ");
-	strcat(command, especial);
+	strcat(command, special);
 	strcat(command, " '");
 	strcat(command, path);
 	strcat(command, "/");
