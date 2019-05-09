@@ -17,7 +17,9 @@
 #define BULK_RENAME 'b'
 #define OPEN_EDITOR 'e'
 #define FILE_DELETE 'D' // Remember No warranty!!!
+
 static const char *EDITOR = "nvim";
+
 #define TYPES 9
 static const struct files_extensions {
 	const char *program;

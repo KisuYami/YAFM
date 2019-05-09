@@ -74,12 +74,14 @@ int main() {
 
 		if(key == MOV_RIGHT) {
 			newPwd = cdEnter(newPwd, list[cursor]);
-			cursor = 0;
+			cursor = (cursor > 0) ? cursor : 0;
+			cursor = (cursor < listLenght - 1) ? cursor : 0;
 		}
 
 		if(key == MOV_LEFT) {
 			newPwd = cdBack(newPwd);
-			cursor = 0;
+			cursor = (cursor > 0) ? cursor : 0;
+			cursor = (cursor < listLenght - 1) ? cursor : 0;
 		}
 		// End Cursor Movements
 
