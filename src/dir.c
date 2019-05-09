@@ -34,7 +34,7 @@ int listFiles(char *l[LIST_LENGHT], char *cwd) {
 	return i;
 }
 
-int isFile(const char *path) {
+int isFile(char *path) {
     struct stat path_to_file;
     stat(path, &path_to_file);
     return S_ISREG(path_to_file.st_mode);
@@ -81,11 +81,10 @@ char *cdBack(char path[]) {
 	return newPath;
 }
 
-int openFile(const char path[]) {
+int openFile(char path[]) {
 
 	int i, p;
 	char *file = malloc(256);
-	char *command = malloc(sizeof(*path) + OPEN_FILE_BUFFER_SIZE);
 
 	i = strlen(path);
 	p = 0;
@@ -109,14 +108,7 @@ int openFile(const char path[]) {
 	file = realloc(file, (sizeof(*path) + 1));
 	for(p = 0; p < TYPES; p++) {
 		if(strcmp(file, files_extensions[p].extension) == 0) {
-			strcpy(command, files_extensions[p].program);
-			strcat(command, " '");
-			strcat(command, path);
-			strcat(command, "'");
-			strcat(command, " &>/dev/null"); // No terminal output
-			strcat(command, " &");
-			system(command);
-			free(command);
+			shellActions(path, "", files_extensions[p].program, "");
 			return 1;
 		}
 	}
@@ -124,17 +116,16 @@ int openFile(const char path[]) {
 	return 0;
 }
 
-void shellActions(char path[], char file[], char shellCommand[], char special[]) {
+void shellActions(char path[], char file[], const char shellCommand[], char special[]) {
 
 	char *command = malloc(sizeof(*path) +
-			sizeof(*file) + sizeof(*special) + sizeof(*command) + 25);
+			sizeof(*file) + sizeof(*special) + sizeof(*command) + OPEN_FILE_BUFFER_SIZE);
 
 	strcpy(command, shellCommand); //Feio
 	strcat(command, " ");
 	strcat(command, special);
 	strcat(command, " '");
 	strcat(command, path);
-	strcat(command, "/");
 	strcat(command, file);
 	strcat(command, "'");
 	system(command);

@@ -43,10 +43,10 @@ int main() {
 
 		// Editor Actions
 		if(key == BULK_RENAME)
-			shellActions(newPwd, "", "nvim", "-c Renamer");
+			shellActions(newPwd, "", EDITOR, "-c Renamer");
 
 		if(key == OPEN_EDITOR)
-			shellActions(newPwd, list[cursor], "nvim", "");
+			shellActions(newPwd, list[cursor], EDITOR, "");
 		// End Editor Actions
 
 		// File operations

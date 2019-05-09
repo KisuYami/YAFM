@@ -60,9 +60,9 @@
   @author Reberti Soares
   @date 05-05-2019
   */
-int openFile(const char path[]);
-int isFile(const char *path);
+int openFile(char path[]);
+int isFile(char *path);
 int listFiles(char *l[255], char *cwd);
 char *cdBack(char path[]);
 char *cdEnter(char state[], const char text[]);
-void shellActions(char path[], char file[], char shellCommand[], char special[]);
+void shellActions(char path[], char file[], const char shellCommand[], char special[]);
