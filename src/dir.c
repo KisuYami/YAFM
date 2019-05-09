@@ -128,6 +128,7 @@ void shellActions(char path[], char file[], const char shellCommand[], char spec
 	strcat(command, path);
 	strcat(command, file);
 	strcat(command, "'");
+	strcat(command, " &>/dev/null");
 	system(command);
 	free(command);
 }
