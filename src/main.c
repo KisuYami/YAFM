@@ -27,7 +27,7 @@ int main() {
 	int cursor;
 	char key;
 	char pwd[100];
-	char *list[255];
+	char *list[LIST_LENGHT];
 	char *newPwd = "nada";
 
 	getcwd(pwd, sizeof(pwd));
@@ -55,16 +55,13 @@ int main() {
 
 		if(key == MOV_RIGHT) {
 			newPwd = cdEnter(newPwd, list[cursor]);
-			cursor = (cursor < (listLenght - 1)) ? cursor : 0;
+			cursor = 0;
 		}
 
 		if(key == MOV_LEFT) {
 			newPwd = cdBack(newPwd);
-			cursor = (cursor < (listLenght - 1)) ? cursor : 0;
-		}
-
-		if(cursor > listLenght || cursor < 0)
 			cursor = 0;
+		}
 
 		clear();
 		displayDirPath(newPwd);

@@ -6,10 +6,11 @@
 #include <ncurses.h>
 #include <sys/types.h>
 #include <sys/stat.h>
+#include <fcntl.h>
 #include "dir.h"
 #include "../config.h"
 
-int listFiles(char *l[255], char *cwd) {
+int listFiles(char *l[LIST_LENGHT], char *cwd) {
 
 	int i = 0;
 	DIR *d;
@@ -41,7 +42,7 @@ int isFile(const char *path) {
 
 char *cdEnter(char state[], const char text[]) {
 
-	char *result = malloc(strlen(state) + strlen(text) + 1024);
+	char *result = malloc(strlen(state) + strlen(text) + CD_ENTER_BUFFER_SIZE);
 
 	strcpy(result, state);
 	strcat(result, "/");
@@ -84,7 +85,7 @@ int openFile(const char path[]) {
 
 	int i, p;
 	char *file = malloc(256);
-	char *command = malloc(sizeof(*path) + 1024);
+	char *command = malloc(sizeof(*path) + OPEN_FILE_BUFFER_SIZE);
 
 	i = strlen(path);
 	p = 0;
