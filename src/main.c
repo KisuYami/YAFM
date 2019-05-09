@@ -39,7 +39,7 @@ int main() {
 	displayDirPath(newPwd);
 	displayFiles(list, listLenght, 0);
 
-	while((key = getch()) != 'q') {
+	while((key = getch()) != 'q') { //Mudar para Switch.
 
 		if(key == BULK_RENAME)
 			editorActions(newPwd, "", "-c Renamer");
@@ -52,6 +52,18 @@ int main() {
 
 		if(key == MOV_UP && cursor > 0)
 			cursor--;
+
+		if(key == MOV_BOTTOM && cursor < (listLenght - 1))
+			cursor = listLenght - 1;
+
+		if(key == MOV_TOP && cursor > 0)
+			cursor = 0;
+
+		if(key == MOV_MIDDLE) {
+			cursor = listLenght / 2;
+			if(cursor < 0)
+				cursor = 0;
+		}
 
 		if(key == MOV_RIGHT) {
 			newPwd = cdEnter(newPwd, list[cursor]);

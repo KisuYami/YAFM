@@ -9,6 +9,9 @@
 #define MOV_RIGHT 'l'
 #define MOV_DOWN 'j'
 #define MOV_UP 'k'
+#define MOV_BOTTOM 'L'
+#define MOV_MIDDLE 'M'
+#define MOV_TOP 'H'
 #define SHOW_HIDDEN 'z'
 #define HIDE_HIDDEN 'Z'
 #define BULK_RENAME 'b' // Needs external editor, see void editorActions in dir.c
