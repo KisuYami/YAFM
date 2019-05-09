@@ -33,7 +33,7 @@ Like ranger, but worse, and in C.
     - [ ] Plain File Preview;
     - [x] Use in external Source(not 100% working, but do the job).
     - [x] Bulk Rename.
-    - [ ] Delete Files;
+    - [x] Delete Files;
     - [ ] Move Files;
     - [ ] Select Files;
     - [ ] Show/Hide Hidden(easy)

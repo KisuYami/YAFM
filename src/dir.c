@@ -124,12 +124,13 @@ int openFile(const char path[]) {
 	return 0;
 }
 
-void editorActions(char path[], char file[], char special[]) {
+void shellActions(char path[], char file[], char shellCommand[], char special[]) {
 
 	char *command = malloc(sizeof(*path) +
-			sizeof(*file) + sizeof(*special) + 25);
+			sizeof(*file) + sizeof(*special) + sizeof(*command) + 25);
 
-	strcpy(command, "nvim ");
+	strcpy(command, shellCommand); //Feio
+	strcat(command, " ");
 	strcat(command, special);
 	strcat(command, " '");
 	strcat(command, path);

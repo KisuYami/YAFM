@@ -49,12 +49,13 @@
   @author Reberti Soares
   @date 05-05-2019
   */
-/** @fn void editorActions(char path[], char file[], char especial[]);
+/** @fn void shellActions(char path[], char file[], char shellCommand[], char special[]);
   @brief Use a editor for action
 
   @param path[] Where the file is.
   @param file[] The file itself(can be empty string).
-  @param special[] Command executed in file(can be empty string).
+  @param command[] Command executed in file(can be empty string).
+  @param special[] Some statements for command executed in file(can be empty string).
 
   @author Reberti Soares
   @date 05-05-2019
@@ -64,4 +65,4 @@ int isFile(const char *path);
 int listFiles(char *l[255], char *cwd);
 char *cdBack(char path[]);
 char *cdEnter(char state[], const char text[]);
-void editorActions(char path[], char file[], char special[]);
+void shellActions(char path[], char file[], char shellCommand[], char special[]);

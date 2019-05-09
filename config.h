@@ -14,8 +14,9 @@
 #define MOV_TOP 'H'
 #define SHOW_HIDDEN 'z'
 #define HIDE_HIDDEN 'Z'
-#define BULK_RENAME 'b' // Needs external editor, see void editorActions in dir.c
-#define OPEN_EDITOR 'e' // Needs external editor, see void editorActions in dir.c
+#define BULK_RENAME 'b'
+#define OPEN_EDITOR 'e'
+#define FILE_DELETE 'D' // Remember No warranty!!!
 
 #define TYPES 9
 static const struct files_extensions {

@@ -41,12 +41,19 @@ int main() {
 
 	while((key = getch()) != 'q') { //Mudar para Switch.
 
+		// Editor Actions
 		if(key == BULK_RENAME)
-			editorActions(newPwd, "", "-c Renamer");
+			shellActions(newPwd, "", "nvim", "-c Renamer");
 
 		if(key == OPEN_EDITOR)
-			editorActions(newPwd, list[cursor], "");
+			shellActions(newPwd, list[cursor], "nvim", "");
+		// End Editor Actions
 
+		// File operations
+		if(key == FILE_DELETE)
+			shellActions(newPwd, list[cursor], "rm", "-rd");
+
+		// Cursor Movements
 		if(key == MOV_DOWN && cursor < (listLenght - 1))
 			cursor++;
 
@@ -74,6 +81,7 @@ int main() {
 			newPwd = cdBack(newPwd);
 			cursor = 0;
 		}
+		// End Cursor Movements
 
 		clear();
 		displayDirPath(newPwd);
