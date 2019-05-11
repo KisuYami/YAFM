@@ -61,7 +61,7 @@
   @date 05-05-2019
   */
 int openFile(char path[]);
-int isFile(char *path);
+int isFile(char *path); // I see it
 int listFiles(char *l[], char *cwd);
 char *cdBack(char path[]);
 char *cdEnter(char state[], const char text[]);

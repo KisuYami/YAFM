@@ -21,5 +21,6 @@
   @author Reberti Soares
   @date 05-05-2019
   */
-void displayFiles(char *list[255], int lenght, int cursor);
+void setupScr();
 void displayDirPath(char *path);
+void displayFiles(char *list[], int lenght, int cursor);

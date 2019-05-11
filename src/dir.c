@@ -1,12 +1,11 @@
-#include <dirent.h>
-#include <unistd.h>
-#include <stddef.h>
+#include <stdio.h>
+#include <fcntl.h>
 #include <stdlib.h>
 #include <string.h>
-#include <ncurses.h>
+#include <dirent.h>
+#include <unistd.h>
 #include <sys/types.h>
 #include <sys/stat.h>
-#include <fcntl.h>
 #include "dir.h"
 #include "../config.h"
 
@@ -41,9 +40,7 @@ char *cdEnter(char state[], const char text[]) {
 
 	char *result = malloc(strlen(state) + strlen(text) + CD_ENTER_BUFFER_SIZE);
 
-	strcpy(result, state);
-	strcat(result, "/");
-	strcat(result, text);
+	sprintf(result, "%s/%s", state, text);
 
 	if(isFile(result) == 1) {
 		openFile(result);

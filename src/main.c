@@ -1,23 +1,10 @@
-#include <ncurses.h>
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
+#include <ncurses.h>
 #include "../config.h"
 #include "dir.h"
-#include "main.h"
 #include "display.h"
-
-void setupScr() {
-
-	initscr();
-	cbreak();
-        noecho();
-	curs_set(0); start_color();
-	//Colors
-	init_pair(1, COLOR_RED,  COLOR_BLACK);
-	init_pair(2, COLOR_CYAN, COLOR_BLACK);
-	init_pair(3, COLOR_BLUE, COLOR_BLACK);
-}
 
 int main() {
 
@@ -39,7 +26,7 @@ int main() {
 	displayDirPath(newPwd);
 	displayFiles(list, listLenght, 0);
 
-	while((key = getch()) != 'q') { //Mudar para Switch.
+	while((key = getch()) != 'q') {
 
 		switch(key) {
 			// Editor Actions

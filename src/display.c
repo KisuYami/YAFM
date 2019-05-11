@@ -1,5 +1,19 @@
 #include <ncurses.h>
 #include "dir.h"
+#include "../config.h"
+
+void setupScr() {
+
+	initscr();
+	cbreak();
+        noecho();
+	curs_set(0); start_color();
+	//Colors
+	init_pair(1, COLOR_RED,  COLOR_BLACK);
+	init_pair(2, COLOR_CYAN, COLOR_BLACK);
+	init_pair(3, COLOR_BLUE, COLOR_BLACK);
+}
+
 
 void displayFiles(char *list[255], int lenght, int cursor) {
 
