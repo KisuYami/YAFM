@@ -1,5 +1,5 @@
 TARGET_EXEC ?= yafm
-
+DESTDIR= /bin/.
 BUILD_DIR ?= ./build
 SRC_DIRS ?= ./src
 CLIBS= -Wall -pedantic -g -lncurses
@@ -28,7 +28,7 @@ clean:
 	$(RM) -r $(BUILD_DIR)
 
 install: $(BUILD_DIR)/$(TARGET_EXEC)
-	cp ${BUILD_DIR}/${TARGET_EXEC} /bin/.
+	cp ${BUILD_DIR}/${TARGET_EXEC} ${DESTDIR}
 
 -include $(DEPS)
 
