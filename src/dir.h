@@ -62,7 +62,8 @@
   */
 int openFile(char path[]);
 int isFile(char *path);
-int listFiles(char *l[255], char *cwd);
+int listFiles(char *l[], char *cwd);
 char *cdBack(char path[]);
 char *cdEnter(char state[], const char text[]);
 void shellActions(char path[], char file[], const char shellCommand[], char special[]);
+void bulkRename(char path[]);

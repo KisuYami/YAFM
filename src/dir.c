@@ -82,6 +82,7 @@ int openFile(char path[]) {
 
 	int i, p;
 	char *file = malloc(256);
+	char *command = malloc(sizeof(*path) + 255);
 
 	i = strlen(path);
 	p = 0;
@@ -105,7 +106,8 @@ int openFile(char path[]) {
 	file = realloc(file, (sizeof(*path) + 1));
 	for(p = 0; p < TYPES; p++) {
 		if(strcmp(file, files_extensions[p].extension) == 0) {
-			shellActions(path, "", files_extensions[p].program, "");
+			sprintf(command, "%s \"%s\" &>/dev/null", files_extensions[p].program, path);
+			system(command);
 			return 1;
 		}
 	}
@@ -115,18 +117,21 @@ int openFile(char path[]) {
 
 void shellActions(char path[], char file[], const char shellCommand[], char special[]) {
 
-	char *command = malloc(sizeof(*path) +
-			sizeof(*file) + sizeof(*special) + sizeof(*command) + OPEN_FILE_BUFFER_SIZE);
+	char *command = malloc(sizeof(*path) + sizeof(*file)
+			+ sizeof(*special) + sizeof(*command) + OPEN_FILE_BUFFER_SIZE);
 
-	strcpy(command, shellCommand); //Feio
-	strcat(command, " ");
-	strcat(command, special);
-	strcat(command, " \"");
-	strcat(command, path);
-	strcat(command, file);
-	strcat(command, "\"");
-	if(strcmp(shellCommand, EDITOR))
-		strcat(command, " &>/dev/null");
+	sprintf(command, "%s %s \"%s%s\"", shellCommand, special, path, file);
 	system(command);
 	free(command);
+}
+
+void bulkRename(char path[]) {
+
+	char *command = malloc(sizeof(*path) + 28);
+
+	sprintf(command, "cd \"%s\" && nvim -c Renamer", path); //Lazy
+	system(command);
+
+	free(command);
+
 }

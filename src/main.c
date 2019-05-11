@@ -14,7 +14,7 @@ void setupScr() {
         noecho();
 	curs_set(0); start_color();
 	//Colors
-	init_pair(1, COLOR_RED, COLOR_BLACK);
+	init_pair(1, COLOR_RED,  COLOR_BLACK);
 	init_pair(2, COLOR_CYAN, COLOR_BLACK);
 	init_pair(3, COLOR_BLUE, COLOR_BLACK);
 }
@@ -41,10 +41,10 @@ int main() {
 
 	while((key = getch()) != 'q') { //Mudar para Switch.
 
-		// Editor Actions
 		switch(key) {
+			// Editor Actions
 			case BULK_RENAME:
-				shellActions(newPwd, "", EDITOR, "-c Renamer");
+				bulkRename(newPwd);
 				break;
 
 			case OPEN_EDITOR:
@@ -93,10 +93,11 @@ int main() {
 				newPwd = cdBack(newPwd);
 				cursor = 0;
 				break;
+			// End Cursor Movements
+
 			default:
 				break;
 		}
-		// End Cursor Movements
 
 		clear();
 		displayDirPath(newPwd);
