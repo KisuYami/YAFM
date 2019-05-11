@@ -42,44 +42,59 @@ int main() {
 	while((key = getch()) != 'q') { //Mudar para Switch.
 
 		// Editor Actions
-		if(key == BULK_RENAME)
-			shellActions(newPwd, "", EDITOR, "-c Renamer");
+		switch(key) {
+			case BULK_RENAME:
+				shellActions(newPwd, "", EDITOR, "-c Renamer");
+				break;
 
-		if(key == OPEN_EDITOR)
-			shellActions(newPwd, list[cursor], EDITOR, "");
-		// End Editor Actions
+			case OPEN_EDITOR:
+				shellActions(newPwd, list[cursor], EDITOR, "");
+				break;
+			// End Editor Actions
 
-		// File operations
-		if(key == FILE_DELETE)
-			shellActions(newPwd, list[cursor], "rm", "-rd");
+			// File operations
+			case FILE_DELETE:
+				shellActions(newPwd, list[cursor], "rm", "-rd");
+				break;
 
-		// Cursor Movements
-		if(key == MOV_DOWN && cursor < (listLenght - 1))
-			cursor++;
+			// Cursor Movements
+			case MOV_DOWN:
+				if(cursor < (listLenght - 1))
+					cursor++;
+				break;
 
-		if(key == MOV_UP && cursor > 0)
-			cursor--;
+			case MOV_UP:
+				if(cursor > 0)
+					cursor--;
+				break;
 
-		if(key == MOV_BOTTOM && cursor < (listLenght - 1))
-			cursor = listLenght - 1;
+			case MOV_BOTTOM:
+				if(cursor < (listLenght - 1))
+					cursor = listLenght - 1;
+				break;
 
-		if(key == MOV_TOP && cursor > 0)
-			cursor = 0;
+			case MOV_TOP:
+				if(cursor > 0)
+					cursor = 0;
+				break;
 
-		if(key == MOV_MIDDLE) {
-			cursor = listLenght / 2;
-			if(cursor < 0)
+			case MOV_MIDDLE:
+				cursor = listLenght / 2;
+				if(cursor < 0)
+					cursor = 0;
+				break;
+
+			case MOV_RIGHT:
+				newPwd = cdEnter(newPwd, list[cursor]);
 				cursor = 0;
-		}
+				break;
 
-		if(key == MOV_RIGHT) {
-			newPwd = cdEnter(newPwd, list[cursor]);
-			cursor = 0;
-		}
-
-		if(key == MOV_LEFT) {
-			newPwd = cdBack(newPwd);
-			cursor = 0;
+			case MOV_LEFT:
+				newPwd = cdBack(newPwd);
+				cursor = 0;
+				break;
+			default:
+				break;
 		}
 		// End Cursor Movements
 

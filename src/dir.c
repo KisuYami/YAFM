@@ -23,10 +23,7 @@ int listFiles(char *l[LIST_LENGHT], char *cwd) {
 			if(*dir->d_name != '.') { // Don't Show hidden files
 				l[i] = dir->d_name;
 				i++;
-			/*} if(hidden == 1) { // Show hidden files: don't work
-				l[i] = dir->d_name;
-				i++;
-			*/}
+			}
 		}
 
 		closedir(d);
@@ -124,11 +121,12 @@ void shellActions(char path[], char file[], const char shellCommand[], char spec
 	strcpy(command, shellCommand); //Feio
 	strcat(command, " ");
 	strcat(command, special);
-	strcat(command, " '");
+	strcat(command, " \"");
 	strcat(command, path);
 	strcat(command, file);
-	strcat(command, "'");
-	strcat(command, " &>/dev/null");
+	strcat(command, "\"");
+	if(strcmp(shellCommand, EDITOR))
+		strcat(command, " &>/dev/null");
 	system(command);
 	free(command);
 }
