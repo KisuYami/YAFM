@@ -107,21 +107,21 @@ int openFile(char path[]) {
 		if(strcmp(file, files_extensions[p].extension) == 0) {
 			pid_t outProgram = fork();
 
-			sprintf(command, "%s \"%s\" &>/dev/null", files_extensions[p].program, path);
+			sprintf(command, "%s \"%s\" &>/dev/null", files_extensions[p].program, path); // Change to snprintf
 
 			if(outProgram == 0) {
 				if(system(command) == 0) { // Makes sure that the child of YAFM commit sepuko, and return their karma.
 					free(command);
 					exit(0);
 				}
-				else
+				else {
+					free(command);
 					exit(1);
+				}
 			} else if(outProgram > 0) {
 				free(command);
-				return 1;
 			}
 
-			return 0;
 		}
 	}
 
@@ -130,11 +130,11 @@ int openFile(char path[]) {
 
 void shellActions(char path[], char file[], const char shellCommand[], char special[]) {
 
-	char *command = malloc(sizeof(*path) + sizeof(*file)
-			+ sizeof(*special) + sizeof(*command) + OPEN_FILE_BUFFER_SIZE);
+	char *command = malloc(sizeof(*path) + 279 + OPEN_FILE_BUFFER_SIZE); // 279 = Max name lenght in unix(255) plus the longest command i can think.
 
 	sprintf(command, "%s %s \"%s%s\"", shellCommand, special, path, file);
 	system(command);
+
 	free(command);
 }
 
