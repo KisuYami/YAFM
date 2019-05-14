@@ -6,6 +6,7 @@
 #include <unistd.h>
 #include <sys/types.h>
 #include <sys/stat.h>
+#include <sys/wait.h>
 #include "dir.h"
 #include "../config.h"
 
@@ -107,14 +108,17 @@ int openFile(char path[]) {
 			pid_t outProgram = fork();
 
 			sprintf(command, "%s \"%s\" &>/dev/null", files_extensions[p].program, path);
+
 			if(outProgram == 0) {
-				system(command);
-				free(command);
-				exit(0);
-			}
-			else if(outProgram > 0) {
+				if(system(command) == 0) { // Makes sure that the child of YAFM commit sepuko, and return their karma.
 					free(command);
-					return 1;
+					exit(0);
+				}
+				else
+					exit(1);
+			} else if(outProgram > 0) {
+				free(command);
+				return 1;
 			}
 
 			return 0;
