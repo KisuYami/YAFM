@@ -15,7 +15,7 @@ void setupScr() {
 }
 
 
-void displayFiles(char *list[255], int lenght, int cursor) {
+void displayFiles(char *list[LIST_LENGHT], int lenght, int cursor) {
 
 	for(int i = 0; i < lenght; i++) {
 		if(i == cursor) {
@@ -24,7 +24,7 @@ void displayFiles(char *list[255], int lenght, int cursor) {
 			mvprintw(i+1, 3, "%s", list[i]);
 			attroff(A_STANDOUT | COLOR_PAIR(1));
 
-		} else if(isFile(list[i]) != 0) {
+		} else if(isFile(list[i]) != 0 && COLORED_FILES == 0) {
 
 			attron(A_BOLD | COLOR_PAIR(3));
 			mvprintw(i+1, 3, "%s", list[i]);

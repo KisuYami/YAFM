@@ -38,9 +38,10 @@ int isFile(char *path) {
 
 char *cdEnter(char state[], const char text[]) {
 
-	char *result = malloc(strlen(state) + strlen(text) + CD_ENTER_BUFFER_SIZE);
+	size_t size_result = strlen(state) + strlen(text) + CD_ENTER_BUFFER_SIZE;
+	char *result = malloc(size_result);
 
-	sprintf(result, "%s/%s", state, text);
+	snprintf(result, size_result, "%s/%s", state, text);
 
 	if(isFile(result) == 1) {
 		openFile(result);
@@ -78,8 +79,9 @@ char *cdBack(char path[]) {
 int openFile(char path[]) {
 
 	int i, p;
-	char *file = malloc(256);
-	char *command = malloc(sizeof(*path) + 255);
+	char file[255];
+	size_t sizeCommand = sizeof(*path);
+	char *command = malloc(sizeof(sizeCommand) + 255);
 
 	i = strlen(path);
 	p = 0;
@@ -100,12 +102,22 @@ int openFile(char path[]) {
 		i--;
 	}
 
-	file = realloc(file, (sizeof(*path) + 1));
-	for(p = 0; p < TYPES; p++) {
+	for(p = 0; p <= TYPES; p++) {
 		if(strcmp(file, files_extensions[p].extension) == 0) {
+			pid_t outProgram = fork();
+
 			sprintf(command, "%s \"%s\" &>/dev/null", files_extensions[p].program, path);
-			system(command);
-			return 1;
+			if(outProgram == 0) {
+				system(command);
+				free(command);
+				exit(0);
+			}
+			else if(outProgram > 0) {
+					free(command);
+					return 1;
+			}
+
+			return 0;
 		}
 	}
 
