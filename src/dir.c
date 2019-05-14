@@ -93,12 +93,12 @@ int openFile(char path[]) {
 			break;
 
 		i--;
-		p++;
+		p++; // Get the size of th extension
 	}
 
 	i = strlen(path);
 	while(p >= 0) {
-		file[p] = path[i];
+		file[p] = path[i]; // Get the extension as decrement the p.
 		p--;
 		i--;
 	}
