@@ -118,11 +118,12 @@ int openFile(char path[]) {
 					free(command);
 					exit(1);
 				}
-			} else if(outProgram > 0) {
+			} else if(outProgram >= 1) {
 				free(command);
 			}
 
 		}
+		break;
 	}
 
 	return 0;
