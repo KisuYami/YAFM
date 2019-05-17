@@ -120,10 +120,10 @@ int openFile(char path[]) {
 				}
 			} else if(outProgram >= 1) {
 				free(command);
+				break;
 			}
 
 		}
-		break;
 	}
 
 	return 0;
