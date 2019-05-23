@@ -10,6 +10,11 @@
 #include "dir.h"
 #include "../config.h"
 
+static int compare(const void *p1, const void *p2)
+{
+	return strcmp(* (char * const *) p1, * (char * const *) p2);
+}
+
 int listFiles(char *l[LIST_LENGHT], char *cwd) {
 
 	int i = 0;
@@ -28,19 +33,8 @@ int listFiles(char *l[LIST_LENGHT], char *cwd) {
 
 		closedir(d);
 	}
-	char tmp[255];
-	int y, x;
 
-	for(y = 0; y <= i-1; y++) { // Alphabetical sort
-		for(x = y + 1; x <= i-1; x++) {
-			memset(tmp, 0, 255);
-			if(strcmp(l[y], l[x]) > 0) {
-				strcpy(tmp, l[y]);
-				strcpy(l[y], l[x]);
-				strcpy(l[x], tmp);
-			}
-		}
-	}
+	qsort(&l[0], i, sizeof(char *), compare);
 
 	return i;
 }
