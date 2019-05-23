@@ -28,6 +28,19 @@ int listFiles(char *l[LIST_LENGHT], char *cwd) {
 
 		closedir(d);
 	}
+	char tmp[LIST_LENGHT];
+	int y, x;
+
+	for(y = 0; y <= i-1; y++) {
+		for(x = y + 1; x <= i-1; x++) {
+			if(strcmp(l[y], l[x]) > 0) {
+				strcpy(tmp, l[y]);
+				strcpy(l[y], l[x]);
+				strcpy(l[x], tmp);
+			}
+		}
+	}
+
 	return i;
 }
 
