@@ -28,11 +28,12 @@ int listFiles(char *l[LIST_LENGHT], char *cwd) {
 
 		closedir(d);
 	}
-	char tmp[LIST_LENGHT];
+	char tmp[255];
 	int y, x;
 
-	for(y = 0; y <= i-1; y++) {
+	for(y = 0; y <= i-1; y++) { // Alphabetical sort
 		for(x = y + 1; x <= i-1; x++) {
+			memset(tmp, 0, 255);
 			if(strcmp(l[y], l[x]) > 0) {
 				strcpy(tmp, l[y]);
 				strcpy(l[y], l[x]);

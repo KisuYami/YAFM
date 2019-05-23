@@ -2,7 +2,7 @@
 
 Like ranger, but worse, and in C.
 
-![example](./newshow.png)
+![example](./show.png)
 
 ## Load Times
 + YAFM:
