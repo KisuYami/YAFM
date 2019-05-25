@@ -73,12 +73,12 @@ int main() {
 
 			case MOV_RIGHT:
 				newPwd = cdEnter(newPwd, list[cursor]);
-				cursor = 0;
+				if(cursor >= listLenght || cursor < 0)
+					cursor = 0;
 				break;
 
 			case MOV_LEFT:
 				newPwd = cdBack(newPwd);
-				cursor = 0;
 				break;
 			// End Cursor Movements
 
@@ -87,8 +87,13 @@ int main() {
 		}
 
 		clear();
+
 		displayDirPath(newPwd);
 		listLenght = listFiles(list, newPwd);
+
+		if(cursor >= listLenght - 1 || cursor < 0) // This should be aways after listFiles()
+				cursor = listLenght - 1;
+
 		displayFiles(list, listLenght, cursor);
 	}
 
