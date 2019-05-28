@@ -1,4 +1,24 @@
 /** @file dir.h
+
+void previewDir(char *path, char *text) {
+
+	int Y, previewLenght, start;
+	size_t size_result = strlen(state) + strlen(text) + CD_ENTER_BUFFER_SIZE;
+	char *previewList[LIST_LENGHT];
+	char *previewPwd = malloc(size_result);
+
+	snprintf(previewPwd, size_result, "%s/%s", state, text);
+
+	Y = getmaxy(stdscr);
+	previewLenght = listFiles(previewList, previewPwd);
+
+	start = (Y / 2) + 3;
+
+	if(isFile(previewPw) != 1)
+		displayFiles(previewList, previewLenght, -1, start);
+	else
+		return;
+}
   @brief Folder and File Operations
 
   This code make the core functions like enter and exiting folders, using
@@ -63,7 +83,8 @@
 int openFile(char path[]);
 int isFile(char *path); // I see it
 int listFiles(char *l[], char *cwd);
-char *cdBack(char path[]);
-char *cdEnter(char state[], const char text[]);
+void cdEnter(char *path, const char workingFile[]);
+void cdBack(char *path);
 void shellActions(char path[], char file[], const char shellCommand[], char special[]);
 void bulkRename(char path[]);
+void previewDir(char *path, char *text);

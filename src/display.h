@@ -23,4 +23,4 @@
   */
 void setupScr();
 void displayDirPath(char *path);
-void displayFiles(char *list[], int lenght, int cursor);
+void displayFiles(char *list[], int lenght, int cursor, int startPoint);

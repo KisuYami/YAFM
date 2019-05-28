@@ -12,20 +12,28 @@ int main() {
 
 	int listLenght;
 	int cursor;
+	size_t size_path;
 	char key;
-	char pwd[100];
 	char *list[LIST_LENGHT];
-	char *newPwd = "nada";
+	char *newPwd, *tmpPwd;
 
-	getcwd(pwd, sizeof(pwd));
-	pwd[sizeof(pwd) - 1] = '\0';
 	cursor = 0;
+	size_path = 256 * sizeof(char);
+	newPwd = malloc(size_path);
+	tmpPwd = malloc(size_path);
 
+	// Initialize dir absolute path
+	getcwd(tmpPwd, size_path);
+	tmpPwd[size_path - 1] = '\0';
+	snprintf(newPwd, size_path, "%s/", tmpPwd);
+	free(tmpPwd);
+
+	// Start base of program
 	listLenght = listFiles(list, ".");
-	newPwd = cdEnter(pwd, "");
 	displayDirPath(newPwd);
-	displayFiles(list, listLenght, 0);
+	displayFiles(list, listLenght, 0, 3);
 
+	// Main loop
 	while((key = getch()) != 'q') {
 
 		switch(key) {
@@ -40,9 +48,11 @@ int main() {
 			// End Editor Actions
 
 			// File operations
+			/*
 			case FILE_DELETE:
 				shellActions(newPwd, list[cursor], "rm", "-rd");
 				break;
+			*/
 
 			// Cursor Movements
 			case MOV_DOWN:
@@ -72,13 +82,15 @@ int main() {
 				break;
 
 			case MOV_RIGHT:
-				newPwd = cdEnter(newPwd, list[cursor]);
+				cdEnter(newPwd, list[cursor]);
 				if(cursor >= listLenght || cursor < 0)
 					cursor = 0;
+				listLenght = listFiles(list, newPwd);
 				break;
 
 			case MOV_LEFT:
-				newPwd = cdBack(newPwd);
+				cdBack(newPwd);
+				listLenght = listFiles(list, newPwd);
 				break;
 			// End Cursor Movements
 
@@ -88,15 +100,14 @@ int main() {
 
 		clear();
 
-		displayDirPath(newPwd);
-		listLenght = listFiles(list, newPwd);
-
 		if(cursor >= listLenght - 1 || cursor < 0) // This should be aways after listFiles()
 				cursor = listLenght - 1;
 
-		displayFiles(list, listLenght, cursor);
+		displayDirPath(newPwd);
+		displayFiles(list, listLenght, cursor, 3);
 	}
 
 	endwin();
+	free(newPwd);
 	return 0;
 }

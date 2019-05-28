@@ -4,10 +4,12 @@
 #include <string.h>
 #include <dirent.h>
 #include <unistd.h>
+#include <ncurses.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <sys/wait.h>
 #include "dir.h"
+#include "display.h"
 #include "../config.h"
 
 static int compare(const void *p1, const void *p2)
@@ -20,6 +22,7 @@ int listFiles(char *l[LIST_LENGHT], char *cwd) {
 	int i = 0;
 	DIR *d;
 	struct dirent *dir;
+	memset(l, 0, LIST_LENGHT);
 
 	d = opendir(cwd);
 
@@ -45,52 +48,63 @@ int isFile(char *path) {
     return S_ISREG(path_to_file.st_mode);
 }
 
-char *cdEnter(char state[], const char text[]) {
+void previewDir(char *path, char *text) { //TODO: Discover why is interfering with cdEnter()
 
-	size_t size_result = strlen(state) + strlen(text) + CD_ENTER_BUFFER_SIZE;
-	char *result = malloc(size_result);
+	size_t size_result = sizeof(char) * (256 + strlen(path) + strlen(text));
+	int Y, previewLenght;
+	char *previewList[LIST_LENGHT];
+	char previewPwd[size_result];
 
-	snprintf(result, size_result, "%s/%s", state, text);
+	snprintf(previewPwd, size_result, "%s/%s", path, text);
 
-	if(isFile(result) == 1) {
-		openFile(result);
-		return state; // A real free one
-	}
+	Y = getmaxx(stdscr);
+	previewLenght = listFiles(previewList, previewPwd);
 
-	return result;
+	if(isFile(previewPwd) != 1)
+		displayFiles(previewList, previewLenght, -1, (Y / 2) + 3);
 }
 
-char *cdBack(char path[]) {
+void cdEnter(char *path, const char workingFile[]) {
+
+	size_t size_result = sizeof(char) * (256 + strlen(path) + strlen(workingFile));
+	char *result = malloc(size_result);
+
+	snprintf(result, size_result, "%s/%s", path, workingFile);
+
+	if(isFile(result) == 1)
+		openFile(result);
+	else
+		memcpy(path, result, size_result);
+
+	free(result);
+}
+
+void cdBack(char *path) {
 
 	int i;
-	char *newPath = malloc(sizeof(*path) + 1);
-
-	newPath = path;
-	i = strlen(newPath) - 2;
+	i = strlen(path) - 2;
 
 	while(i >= 0) {
 
-		if(newPath[i] == '/') {
-			newPath[i] = '\0';
+		if(path[i] == '/') {
+			path[i] = '\0';
 			break;
 		}
 
 		else {
-			newPath[i] = '\0';
+			path[i] = '\0';
 			i--;
 		}
 	}
 
-	newPath = realloc(newPath, 256);
-	return newPath;
 }
 
 int openFile(char path[]) {
 
 	int i, p;
 	char file[255];
-	size_t sizeCommand = sizeof(*path);
-	char *command = malloc(sizeof(sizeCommand) + 255);
+	size_t size_command = sizeof(*path) * sizeof(char);
+	char *command = malloc(size_command);
 
 	i = strlen(path);
 	p = 0;
