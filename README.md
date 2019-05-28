@@ -20,8 +20,6 @@ Like ranger, but worse, and in C.
     - user    <0m0.787s
     - sys     <0m0.146s
 
-!! THOSE TIMES REFLECT ON MY REFLEX TOO, SEE FOR YOURSELF !!
-
 ## Install
 
     make
@@ -30,17 +28,6 @@ Like ranger, but worse, and in C.
 ## TODO:
 
 + Add Features:
-    - [ ] Plain File Preview;
+    - [ ] Folder Preview;
     - [x] Use in external Source(not 100% working, but do the job).
     - [x] Bulk Rename.
-    - [x] Delete Files;
-    - [ ] Move Files;
-    - [ ] Select Files;
-    - [ ] Show/Hide Hidden(easy)
-
-+ Non Features:
-    - [x] No image preview;
-    - [x] No video preview;
-    - [x] No pdf preview
-
-!! THIS VERSION IS NOT USABLE, STILL IN DEVELOPMENT !!
