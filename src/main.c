@@ -85,12 +85,10 @@ int main() {
 				cdEnter(newPwd, list[cursor]);
 				if(cursor >= listLenght || cursor < 0)
 					cursor = 0;
-				listLenght = listFiles(list, newPwd);
 				break;
 
 			case MOV_LEFT:
 				cdBack(newPwd);
-				listLenght = listFiles(list, newPwd);
 				break;
 			// End Cursor Movements
 
@@ -99,6 +97,8 @@ int main() {
 		}
 
 		clear();
+
+		listLenght = listFiles(list, newPwd);
 
 		if(cursor >= listLenght - 1 || cursor < 0) // This should be aways after listFiles()
 				cursor = listLenght - 1;
