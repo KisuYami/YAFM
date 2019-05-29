@@ -16,26 +16,30 @@ void setupScr() {
 	init_pair(3, COLOR_BLUE, COLOR_BLACK);
 }
 
-void displayFiles(char *list[LIST_LENGHT], int lenght, int cursor, int startPoint) {
+void displayFiles(char *path, char *list[LIST_LENGHT], int lenght, int cursor, int startPoint) {
 
 	char **tmpList = list;
+	size_t size_pathFile = sizeof(char) * (256 + sizeof(*path));
+	char fullFile[size_pathFile];
 
 	for(int i = 0; i < lenght; i++) {
+
+		snprintf(fullFile, size_pathFile, "%s/%s", path, tmpList[i]);
 
 		if(i == cursor) {
 
 			attron(A_STANDOUT | COLOR_PAIR(1));
-			mvprintw(i+1, 3, "%s", tmpList[i]);
+			mvprintw(i+1, startPoint, "%s", tmpList[i]);
 			attroff(A_STANDOUT | COLOR_PAIR(1));
 
-		} else if(isFile(tmpList[i]) != 0 && COLORED_FILES == 0) {
+		} else if(isFile(fullFile) != 0 && COLORED_FILES == 0) {
 
 			attron(A_BOLD | COLOR_PAIR(3));
 			mvprintw(i+1, startPoint, "%s", tmpList[i]);
 			attroff(A_BOLD | COLOR_PAIR(3));
 
 		} else
-			mvprintw(i+1, startPoint, "%s", list[i]);
+			mvprintw(i+1, startPoint, "%s", tmpList[i]);
 	}
 }
 

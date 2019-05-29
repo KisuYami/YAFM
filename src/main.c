@@ -31,7 +31,7 @@ int main() {
 	// Start base of program
 	listLenght = listFiles(list, ".");
 	displayDirPath(newPwd);
-	displayFiles(list, listLenght, 0, 3);
+	displayFiles(newPwd, list, listLenght, 0, 3);
 
 	// Main loop
 	while((key = getch()) != 'q') {
@@ -104,7 +104,8 @@ int main() {
 				cursor = listLenght - 1;
 
 		displayDirPath(newPwd);
-		displayFiles(list, listLenght, cursor, 3);
+		displayFiles(newPwd, list, listLenght, cursor, 3);
+		//previewDir(newPwd, list[cursor]);
 	}
 
 	endwin();
