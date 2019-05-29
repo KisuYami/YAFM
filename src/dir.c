@@ -48,7 +48,7 @@ int isFile(char *path) {
     return S_ISREG(path_to_file.st_mode);
 }
 
-void previewDir(char *path, char *text) { //TODO: Discover why is interfering with cdEnter()
+void previewDir(char *path, char *text) {
 
 	size_t size_result = sizeof(char) * (256 + strlen(path) + strlen(text));
 	int Y, previewLenght;
@@ -61,7 +61,7 @@ void previewDir(char *path, char *text) { //TODO: Discover why is interfering wi
 	previewLenght = listFiles(previewList, previewPwd);
 
 	if(isFile(previewPwd) != 1)
-		displayFiles(previewList, previewLenght, -1, (Y / 2) + 3);
+		displayFiles(path, previewList, previewLenght, -1, (Y / 2) + 3);
 }
 
 void cdEnter(char *path, const char workingFile[]) {

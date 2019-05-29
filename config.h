@@ -4,7 +4,7 @@
 #define CD_ENTER_BUFFER_SIZE 1024
 #define OPEN_FILE_BUFFER_SIZE 1024
 #define LIST_LENGHT 255
-#define COLORED_FILES 1
+#define COLORED_FILES 0
 
 #define MOV_LEFT 'h'
 #define MOV_RIGHT 'l'
