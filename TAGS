@@ -1,56 +1,35 @@
 
-src/dir.c,146
-static int compare(const void *p1, const void *p2) {compare12,207
-int list_files() {list_files16,320
-int is_file(char *path) {is_file43,830
+src/dir.c,679
+static int compare(const void *p1, const void *p2) {compare52,1864
+int file_list(struct working_dir *changing_dir) {file_list56,1977
+int is_file(char *path) {is_file78,2434
+int cd_enter(struct working_dir *changing_dir, int cursor) {cd_enter84,2560
+void cd_back(struct working_dir *changing_dir) {cd_back104,2996
+void file_open(struct working_dir *changing_dir, int cursor) {file_open126,3424
+void file_kill_yank(struct working_dir *changing_dir, int type, int cursor,file_kill_yank139,3706
+void file_paste(struct working_dir *changing_dir) {file_paste150,4125
+void file_delete(struct working_dir *changing_dir, WINDOW *screen, int cursor) {file_delete174,4918
 
-src/dir.h,0
+src/dir.h,524
+#define DIR_HEADERDIR_HEADER2,19
+#define PATH_MAX PATH_MAX4,39
+#define NAME_MAX NAME_MAX5,113
+struct paste_clipboard {paste_clipboard9,232
+  int type;type10,257
+  char path[PATH_MAX];path11,269
+struct working_dir {working_dir14,296
+  int num_files;        // A count for the files in the working foldernum_files15,317
+  char *file[NAME_MAX]; // This should be used with mallocfile16,388
+  char path[PATH_MAX];path17,447
+  struct paste_clipboard working_clipboard[CLIPBOARD_MAX];working_clipboard18,470
 
-src/display.c,34
-void setup_scr() {setup_scr6,85
+src/display.c,315
+void screen_setup() {screen_setup39,1640
+void display_path(struct working_dir *changing_dir, WINDOW *screen) {display_path52,1869
+void display_files(struct working_dir *changing_dir, WINDOW *screen,display_files58,2025
+int display_confirm(WINDOW *screen, char *phrase, char *object) {display_confirm74,2649
 
 src/display.h,0
 
-src/main.c,25
-int main() {main10,162
-
-Makefile,794
-TARGET_EXEC ?= yafmTARGET_EXEC1,0
-DESTDIR= /bin/.DESTDIR2,20
-BUILD_DIR ?= ./buildBUILD_DIR3,36
-SRC_DIRS ?= ./srcSRC_DIRS4,57
-CLIBS= -Wall -pedantic -g -lncursesCLIBS5,75
-SRCS := $(shell find $(SRC_DIRS) -name *.cpp -or -name *.c -or -name *.s)SRCS7,112
-OBJS := $(SRCS:%=$(BUILD_DIR)/%.o)OBJS8,186
-DEPS := $(OBJS:.o=.d)DEPS9,221
-CC= gccCC10,243
-INC_DIRS := $(shell find $(SRC_DIRS) -type d)INC_DIRS12,252
-INC_FLAGS := $(addprefix -I,$(INC_DIRS))INC_FLAGS13,298
-CPPFLAGS ?= $(INC_FLAGS) -MMD -MP -Wall -pedantic -g -march=nativeCPPFLAGS15,340
-$(BUILD_DIR)/$(TARGET_EXEC): $(OBJS)$(BUILD_DIR)/$(TARGET_EXEC)17,408
-$(BUILD_DIR)/%.c.o: %.c$(BUILD_DIR)/%.c.o21,498
-clean:clean27,601
-install: $(BUILD_DIR)/$(TARGET_EXEC)install30,632
-MKDIR_P ?= mkdir -pMKDIR_P35,731
-
-README.md,134
-# Yet Another File ManagerYet Another File Manager1,0
-## Load TimesLoad Times7,87
-## InstallInstall23,344
-## TODO:TODO:28,388
-
-config.h,348
-#define HEADER_FILEHEADER_FILE2,20
-#define PATH_MAX PATH_MAX4,41
-#define NAME_MAX NAME_MAX5,111
-struct {__anon41b17d9101087,182
-  int nm_files; // A count for the files in the working foldernm_files8,191
-  char *file;   // This should be used with mallocfile9,254
-  char path[3][PATH_MAX];path10,305
-} working_dir;working_dir11,331
-
-build/src/dir.c.d,0
-
-build/src/display.c.d,0
-
-build/src/main.c.d,0
+src/main.c,26
+int main() {main46,1737
