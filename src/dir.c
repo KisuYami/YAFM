@@ -188,13 +188,14 @@ void file_paste(struct working_dir *changing_dir) {
   for (i = 0; i < CLIPBOARD_MAX; i++) {
 
     if (changing_dir->working_clipboard[i].type == 0) {
-      snprintf(tmp_command, PATH_MAX * 2 + 25, "mv %s %s &>/dev/null",
+      snprintf(tmp_command, PATH_MAX * 2 + 25, "mv \"%s\" \"%s\" &>/dev/null",
                changing_dir->working_clipboard[i].path, changing_dir->path);
       changing_dir->working_clipboard[i].type = -1; // No duplicates
       system(tmp_command);
     }
     if (changing_dir->working_clipboard[i].type == 1) {
-      snprintf(tmp_command, PATH_MAX * 2 + 25, "cp -r %s %s &>/dev/null",
+      snprintf(tmp_command, PATH_MAX * 2 + 25,
+               "cp -r \"%s\" \"%s\" &>/dev/null",
                changing_dir->working_clipboard[i].path, changing_dir->path);
 
       changing_dir->working_clipboard[i].type = -1; // No duplicates
@@ -204,15 +205,18 @@ void file_paste(struct working_dir *changing_dir) {
   file_list(changing_dir);
 }
 
-void file_delete(struct working_dir *changing_dir, WINDOW *screen, int cursor) {
+int file_delete(struct working_dir *changing_dir, WINDOW *screen, int cursor) {
+
+  int return_value = 0;
   char absolute_path[PATH_MAX];
 
-  if (display_confirm(screen, "Proceed with deletion of %s?",
-                      changing_dir->file[cursor]) == 0) {
+  if (display_confirm(screen, 3, "Proceed with deletion of ",
+                      changing_dir->file[cursor], "?") == 0) {
     snprintf(absolute_path, PATH_MAX + 2, "%s/%s", changing_dir->path,
              changing_dir->file[cursor]);
-    remove(absolute_path);
+    return_value = remove(absolute_path); // Delete the file, see man 3 remove
 
     file_list(changing_dir);
   }
+  return return_value;
 }

@@ -1,33 +1,36 @@
 
-src/dir.c,679
-static int compare(const void *p1, const void *p2) {compare52,1864
-int file_list(struct working_dir *changing_dir) {file_list56,1977
-int is_file(char *path) {is_file78,2434
-int cd_enter(struct working_dir *changing_dir, int cursor) {cd_enter84,2560
-void cd_back(struct working_dir *changing_dir) {cd_back104,2996
-void file_open(struct working_dir *changing_dir, int cursor) {file_open126,3424
-void file_kill_yank(struct working_dir *changing_dir, int type, int cursor,file_kill_yank139,3706
-void file_paste(struct working_dir *changing_dir) {file_paste150,4125
-void file_delete(struct working_dir *changing_dir, WINDOW *screen, int cursor) {file_delete174,4918
+src/dir.c,842
+const char *VIDEO_PLAYER = "mpv";VIDEO_PLAYER48,1837
+const char *IMAGE_VIEWR = "sxiv";IMAGE_VIEWR49,1871
+const char *PDF_READER = "zathura";PDF_READER50,1905
+static int compare(const void *p1, const void *p2) {compare52,1942
+int file_list(struct working_dir *changing_dir) {file_list56,2055
+int is_file(char *path) {is_file78,2512
+int cd_enter(struct working_dir *changing_dir, int cursor) {cd_enter84,2638
+void cd_back(struct working_dir *changing_dir) {cd_back104,3074
+void file_open(struct working_dir *changing_dir, int cursor) {file_open126,3502
+void file_kill_yank(struct working_dir *changing_dir, int type, int cursor,file_kill_yank172,4645
+void file_paste(struct working_dir *changing_dir) {file_paste183,5064
+int file_delete(struct working_dir *changing_dir, WINDOW *screen, int cursor) {file_delete208,5888
 
-src/dir.h,524
+src/dir.h,525
 #define DIR_HEADERDIR_HEADER2,19
 #define PATH_MAX PATH_MAX4,39
 #define NAME_MAX NAME_MAX5,113
-struct paste_clipboard {paste_clipboard9,232
-  int type;type10,257
-  char path[PATH_MAX];path11,269
-struct working_dir {working_dir14,296
-  int num_files;        // A count for the files in the working foldernum_files15,317
-  char *file[NAME_MAX]; // This should be used with mallocfile16,388
-  char path[PATH_MAX];path17,447
-  struct paste_clipboard working_clipboard[CLIPBOARD_MAX];working_clipboard18,470
+struct paste_clipboard {paste_clipboard10,233
+  int type;type11,258
+  char path[PATH_MAX];path12,270
+struct working_dir {working_dir15,297
+  int num_files;        // A count for the files in the working foldernum_files16,318
+  char *file[NAME_MAX]; // This should be used with mallocfile17,389
+  char path[PATH_MAX];path18,448
+  struct paste_clipboard working_clipboard[CLIPBOARD_MAX];working_clipboard19,471
 
-src/display.c,315
-void screen_setup() {screen_setup39,1640
-void display_path(struct working_dir *changing_dir, WINDOW *screen) {display_path52,1869
-void display_files(struct working_dir *changing_dir, WINDOW *screen,display_files58,2025
-int display_confirm(WINDOW *screen, char *phrase, char *object) {display_confirm74,2649
+src/display.c,329
+void screen_setup() {screen_setup40,1660
+void display_path(struct working_dir *changing_dir, WINDOW *screen) {display_path53,1889
+void display_files(struct working_dir *changing_dir, WINDOW *screen,display_files59,2045
+int display_confirm(WINDOW *screen, int phrase_argc, char *phrase_input, ...) {display_confirm76,2698
 
 src/display.h,0
 

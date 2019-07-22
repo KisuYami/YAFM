@@ -33,6 +33,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "../config.h"
 #include "dir.h"
 #include <ncurses.h>
+#include <stdarg.h>
 #include <stdlib.h>
 #include <string.h>
 
@@ -71,15 +72,27 @@ void display_files(struct working_dir *changing_dir, WINDOW *screen,
   }
 }
 
-int display_confirm(WINDOW *screen, char *phrase, char *object) {
+int display_confirm(WINDOW *screen, int phrase_argc, char *phrase_input, ...) {
 
-  int x = getmaxx(screen);
+  int x;
   char key;
+  char phrase_final[255];
+  char *tmp;
+  va_list phrase_list;
 
+  strcpy(phrase_final, phrase_input);
+  va_start(phrase_list, phrase_input);
+  for (x = 0; x < phrase_argc; x++) {
+    tmp = va_arg(phrase_list, char *);
+    strcat(phrase_final, tmp);
+  }
+  va_end(phrase_list);
+
+  x = getmaxx(screen);
   wmove(screen, x - 1, 0); // move to begining of line
   wclrtoeol(screen);       // Clean displayed path
 
-  mvwprintw(screen, x - 1, 1, phrase, object);
+  mvwprintw(screen, x - 1, 1, phrase_final);
   wrefresh(screen);
 
   key = getchar();

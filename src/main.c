@@ -31,8 +31,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
 /*
-TODO:
- - [ ] Directory Preview
+TODO: Directory Preview
 */
 #include "../config.h"
 #include "dir.h"
@@ -87,7 +86,8 @@ int main() {
       break;
 
     case KEY_FILE_DEL:
-      file_delete(&main_dir, left, curs);
+      if (file_delete(&main_dir, left, curs) == -1)
+        display_confirm(left, 2, main_dir.file[curs], " could not be removed!");
       break;
 
     case KEY_FILE_KILL:

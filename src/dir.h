@@ -20,7 +20,7 @@ struct working_dir {
 };
 
 int file_list(struct working_dir *changing_dir);
-void file_delete(struct working_dir *changing_dir, WINDOW *screen, int cursor);
+int file_delete(struct working_dir *changing_dir, WINDOW *screen, int cursor);
 void file_paste(struct working_dir *changing_dir);
 void file_kill_yank(struct working_dir *changing_dir, int type, int cursor,
                     int clipboard_number);
