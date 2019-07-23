@@ -10,5 +10,9 @@
 #define KEY_FILE_KILL 'd'
 #define KEY_FILE_YANK 'y'
 #define KEY_FILE_PASTE 'p'
-#define CLIPBOARD_MAX 50
+
+extern const char *VIDEO_PLAYER;
+extern const char *IMAGE_VIEWR;
+extern const char *PDF_READER;
+
 #endif
