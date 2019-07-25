@@ -37,6 +37,7 @@
 #include <fcntl.h>
 #include <ncurses.h>
 #include <stdio.h>
+#include <stddef.h>
 #include <stdlib.h>
 #include <string.h>
 #include <sys/stat.h>
@@ -44,8 +45,22 @@
 #include <sys/wait.h>
 #include <unistd.h>
 
+const char *VIDEO_PLAYER = "mpv";
+const char *IMAGE_VIEWR = "sxiv";
+const char *PDF_READER = "zathura";
+
 static int compare(const void *p1, const void *p2) {
     return strcmp(*(char *const *)p1, *(char *const *)p2);
+}
+
+const char *file_extension(const char *filename) {
+
+    const char *dot = strrchr(filename, '.');
+
+    if(!dot || dot == filename)
+        return "";
+
+    return dot + 1;
 }
 
 int file_list(struct working_dir *changing_dir) {
@@ -81,7 +96,7 @@ int cd_enter(struct working_dir *changing_dir, int cursor) {
     if (cursor >= changing_dir->num_files)
         return 1;
 
-    if (is_file(changing_dir->path)) {
+    if (is_file(changing_dir->file[cursor])) {
         file_open(changing_dir, cursor);
     } else
         chdir(changing_dir->file[cursor]);
@@ -105,8 +120,7 @@ void cd_back(struct working_dir *changing_dir) {
         }
     }
 
-    if (!is_file(
-            changing_dir->path)) // No need to make the string path to the old val
+    if (!is_file(changing_dir->path))
         chdir(changing_dir->path);
 
     file_list(changing_dir);
@@ -114,41 +128,31 @@ void cd_back(struct working_dir *changing_dir) {
 
 void file_open(struct working_dir *changing_dir, int cursor) {
 
-    int p = 0, i = 0;
     pid_t child;
-    char extension[5];
-    char command[PATH_MAX + 25];
+    char command[PATH_MAX + 23];
 
     // Get the extension
-    // TODO: found a better way
-    while (changing_dir->file[cursor][i] != '.') {
-        if (i > NAME_MAX)
-            break;
-        i++;
-    }
-    while (p < 5) {
-        extension[p] = changing_dir->file[cursor][i];
-        p++;
-        i++;
-    }
+    const char *extension = file_extension(changing_dir->file[cursor]);
 
-    if ((strncmp(extension, ".mkv", 5) == 0) ||
-        (strncmp(extension, ".mp4", 5) == 0)) {
+    // TODO: found a better way
+    if ((strncmp(extension, "mkv", 3) == 0) ||
+        (strncmp(extension, "mp4", 3) == 0)) {
         snprintf(command, PATH_MAX + 25, "%s \"%s\" &>/dev/null", VIDEO_PLAYER,
                  changing_dir->path);
     }
 
-    if (strncmp(extension, ".pdf", 5) == 0) {
+    if (strncmp(extension, "pdf", 3) == 0) {
         snprintf(command, PATH_MAX + 25, "%s \"%s\" &>/dev/null", PDF_READER,
                  changing_dir->path);
     }
 
-    if ((strncmp(extension, ".jpg", 5) == 0) ||
-        (strncmp(extension, ".png", 5) == 0) ||
-        (strncmp(extension, ".jpeg", 5) == 0)) {
+    if ((strncmp(extension, "jpg", 3) == 0) ||
+        (strncmp(extension, "png", 3) == 0) ||
+        (strncmp(extension, "jpeg", 4) == 0)) {
         snprintf(command, PATH_MAX + 25, "%s \"%s\" &>/dev/null", IMAGE_VIEWR,
                  changing_dir->path);
     }
+
     child = fork();
     if (child == 0) {
         if (system(command) == 0)

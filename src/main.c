@@ -42,10 +42,6 @@
 #include <string.h>
 #include <unistd.h>
 
-const char *VIDEO_PLAYER = "mpv";
-const char *IMAGE_VIEWR = "sxiv";
-const char *PDF_READER = "zathura";
-
 int main() {
 
     int x, y;
