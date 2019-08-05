@@ -37,15 +37,31 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
+#include <getopt.h>
 
-int main() {
+int main(int argc, char *argv[]) {
 
     int x, y;
     int curs = 0;
     int clipboard_number = 0;
+    int option_index;
     char key;
     WINDOW *left;
     struct working_dir main_dir;
+
+    // What can be done here?
+    while((option_index = getopt(argc, argv, "d:")) != -1) {
+        switch (option_index) {
+            case 'd':
+                if (!is_file(optarg))
+                    chdir(optarg);
+                
+                break;
+            default:
+                break;
+                
+        }
+    }
 
     // Basic Setup
     screen_setup();
