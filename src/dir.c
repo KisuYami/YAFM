@@ -45,25 +45,6 @@
 #include <sys/wait.h>
 #include <unistd.h>
 
-extern char **environ;
-
-char *get_env(char *env_name) {
-
-	int i = 0;
-    char *value;
-
-	while(environ[i] != NULL) {
-
-		if(strncmp(environ[i], env_name, 4) == 0) {
-			value = strrchr(environ[i], '=');
-			value++;
-		}
-		i++;
-	}
-
-    return value;
-}
-
 static int compare(const void *p1, const void *p2) {
     return strcmp(*(char *const *)p1, *(char *const *)p2);
 }
@@ -147,9 +128,9 @@ void file_open(struct working_dir *changing_dir, int cursor) {
     char command[PATH_MAX + 23];
 
     // Env vars
-    const char *doc_reader = get_env("READER");
-    const char *video_viewer = get_env("VIDEO");
-    const char *image_viewer = get_env("IMAGE");
+    const char *doc_reader = getenv("READER");
+    const char *video_viewer = getenv("VIDEO");
+    const char *image_viewer = getenv("IMAGE");
 
     // Get the extension
     const char *extension = file_extension(changing_dir->file[cursor]);
