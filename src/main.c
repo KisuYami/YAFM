@@ -29,10 +29,6 @@
   OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
   OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
-
-/*
-  TODO: Directory Preview
-*/
 #include "../config.h"
 #include "dir.h"
 #include "display.h"
@@ -123,8 +119,8 @@ int main() {
         // Updating Screen
         wclear(left);
 
-        display_path(&main_dir, left);
         display_files(&main_dir, left, curs);
+        display_path(&main_dir, left);
 
         wrefresh(left);
     }
