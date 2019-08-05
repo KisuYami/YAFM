@@ -45,9 +45,24 @@
 #include <sys/wait.h>
 #include <unistd.h>
 
-const char *VIDEO_PLAYER = "mpv";
-const char *IMAGE_VIEWR = "sxiv";
-const char *PDF_READER = "zathura";
+extern char **environ;
+
+char *get_env(char *env_name) {
+
+	int i = 0;
+    char *value;
+
+	while(environ[i] != NULL) {
+
+		if(strncmp(environ[i], env_name, 4) == 0) {
+			value = strrchr(environ[i], '=');
+			value++;
+		}
+		i++;
+	}
+
+    return value;
+}
 
 static int compare(const void *p1, const void *p2) {
     return strcmp(*(char *const *)p1, *(char *const *)p2);
@@ -131,26 +146,32 @@ void file_open(struct working_dir *changing_dir, int cursor) {
     pid_t child;
     char command[PATH_MAX + 23];
 
+    // Env vars
+    const char *doc_reader = get_env("READER");
+    const char *video_viewer = get_env("VIDEO");
+    const char *image_viewer = get_env("IMAGE");
+
     // Get the extension
     const char *extension = file_extension(changing_dir->file[cursor]);
+
 
     // TODO: found a better way
     if ((strncmp(extension, "mkv", 3) == 0) ||
         (strncmp(extension, "mp4", 3) == 0)) {
-        snprintf(command, PATH_MAX + 25, "%s \"%s\" &>/dev/null", VIDEO_PLAYER,
-                 changing_dir->path);
+        snprintf(command, PATH_MAX + 25, "%s \"%s/%s\" &>/dev/null", video_viewer,
+                 changing_dir->path, changing_dir->file[cursor]);
     }
 
     if (strncmp(extension, "pdf", 3) == 0) {
-        snprintf(command, PATH_MAX + 25, "%s \"%s\" &>/dev/null", PDF_READER,
-                 changing_dir->path);
+        snprintf(command, PATH_MAX + 25, "%s \"%s/%s\" &>/dev/null", doc_reader,
+                 changing_dir->path, changing_dir->file[cursor]);
     }
 
     if ((strncmp(extension, "jpg", 3) == 0) ||
         (strncmp(extension, "png", 3) == 0) ||
         (strncmp(extension, "jpeg", 4) == 0)) {
-        snprintf(command, PATH_MAX + 25, "%s \"%s\" &>/dev/null", IMAGE_VIEWR,
-                 changing_dir->path);
+        snprintf(command, PATH_MAX + 25, "%s \"%s/%s\" &>/dev/null", image_viewer,
+                 changing_dir->path, changing_dir->file[cursor]);
     }
 
     child = fork();

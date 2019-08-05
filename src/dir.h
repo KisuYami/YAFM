@@ -23,6 +23,8 @@ struct working_dir {
     struct paste_clipboard working_clipboard[CLIPBOARD_MAX];
 };
 
+char *get_env(char *env_name);
+
 int file_list(struct working_dir *changing_dir);
 int file_delete(struct working_dir *changing_dir, WINDOW *screen, int cursor);
 void file_paste(struct working_dir *changing_dir);
