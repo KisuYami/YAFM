@@ -1,0 +1,4 @@
+#!/bin/bash
+
+cd "yafm-1.0"
+make

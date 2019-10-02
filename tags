@@ -1,0 +1,53 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_OUTPUT_MODE	u-ctags	/u-ctags or e-ctags/
+!_TAG_PROGRAM_AUTHOR	Universal Ctags Team	//
+!_TAG_PROGRAM_NAME	Universal Ctags	/Derived from Exuberant Ctags/
+!_TAG_PROGRAM_URL	https://ctags.io/	/official site/
+!_TAG_PROGRAM_VERSION	0.0.0	/3fdf28bc/
+BUILD_DIR	Makefile	/^BUILD_DIR = .\/build$/;"	m
+CC	Makefile	/^CC= gcc$/;"	m
+CLIBS	Makefile	/^CLIBS= -lncurses$/;"	m
+CPPFLAGS	Makefile	/^CPPFLAGS = $(INC_FLAGS) -O3 -Wall -Werror -g$/;"	m
+DIR_HEADER	src/dir.h	2;"	d
+DIR_WORKING	src/mem.h	2;"	d
+DIR_WORKING	src/working.h	2;"	d
+INC_DIRS	Makefile	/^INC_DIRS = $(shell find $(SRC_DIRS) -type d)$/;"	m
+INC_FLAGS	Makefile	/^INC_FLAGS = $(addprefix -I,$(INC_DIRS))$/;"	m
+MAIN_HEADER	src/main.h	2;"	d
+NAME_MAX	src/dir.h	7;"	d
+OBJS	Makefile	/^OBJS = $(SRCS:%=$(BUILD_DIR)\/%.o)$/;"	m
+PATH_MAX	src/dir.h	6;"	d
+SRCS	Makefile	/^SRCS = $(shell find $(SRC_DIRS) -name *.cpp -or -name *.c -or -name *.s)$/;"	m
+SRC_DIRS	Makefile	/^SRC_DIRS = .\/src$/;"	m
+TARGET_EXEC	Makefile	/^TARGET_EXEC = yafm$/;"	m
+cd_back	src/dir.c	/^void cd_back(struct working_dir *changing_dir) {$/;"	f
+cd_enter	src/dir.c	/^int cd_enter(struct working_dir *changing_dir)$/;"	f
+clip_board	src/main.h	/^	char **clip_board;$/;"	m	struct:config
+compare	src/dir.c	/^static int compare(const void *p1, const void *p2) {$/;"	f	file:
+config	src/main.h	/^struct config {$/;"	s
+cursor	src/dir.h	/^	int cursor;$/;"	m	struct:working_dir
+display_confirm	src/display.c	/^int display_confirm(WINDOW *screen, int phrase_argc, char *phrase_input, ...) {$/;"	f
+display_files	src/display.c	/^void display_files(struct working_dir *changing_dir)$/;"	f
+display_path	src/display.c	/^void display_path(struct working_dir *changing_dir)$/;"	f
+env	src/main.h	/^	char *env[10];$/;"	m	struct:config
+file	src/dir.h	/^    char **file;$/;"	m	struct:working_dir
+file_extension	src/dir.c	/^char *file_extension(const char *filename) {$/;"	f
+file_list	src/dir.c	/^int file_list(struct working_dir *changing_dir)$/;"	f
+file_open	src/dir.c	/^void file_open(struct working_dir *changing_dir)$/;"	f
+free_file_list	src/mem.c	/^void free_file_list(struct working_dir *list)$/;"	f
+free_file_list	src/working.c	/^void free_file_list(struct working_dir *list)$/;"	f
+init_file_list	src/mem.c	/^struct working_dir *init_file_list()$/;"	f
+init_file_list	src/working.c	/^struct working_dir *init_file_list()$/;"	f
+is_file	src/dir.c	/^int is_file(char *path) {$/;"	f
+main	src/main.c	/^int main(int argc, char *argv[]) {$/;"	f
+num_files	src/dir.h	/^    int num_files;$/;"	m	struct:working_dir
+path	src/dir.h	/^    char *path;$/;"	m	struct:working_dir
+resize_ptr	src/mem.c	/^void *resize_ptr(void *ptr, size_t new_size)$/;"	f
+resize_ptr	src/working.c	/^void *resize_ptr(void *ptr, size_t new_size)$/;"	f
+screen	src/dir.h	/^	WINDOW *screen;$/;"	m	struct:working_dir
+screen_setup	src/display.c	/^void screen_setup() {$/;"	f
+system_config	src/main.h	/^} system_config;$/;"	v	typeref:struct:config
+working_dir	src/dir.h	/^struct working_dir {$/;"	s
+x	src/main.h	/^	int x;$/;"	m	struct:config
+y	src/main.h	/^	int y;$/;"	m	struct:config

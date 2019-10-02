@@ -1,148 +1,110 @@
-/*
-  BSD 3-Clause License
-
-  Copyright (c) 2019, Reberti Carvalho Soares
-  All rights reserved.
-
-  Redistribution and use in source and binary forms, with or without
-  modification, are permitted provided that the following conditions are met:
-
-  1. Redistributions of source code must retain the above copyright notice, this
-  list of conditions and the following disclaimer.
-
-  2. Redistributions in binary form must reproduce the above copyright notice,
-  this list of conditions and the following disclaimer in the documentation
-  and/or other materials provided with the distribution.
-
-  3. Neither the name of the copyright holder nor the names of its
-  contributors may be used to endorse or promote products derived from
-  this software without specific prior written permission.
-
-  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-  AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-  IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-  DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
-  FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
-  DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
-  SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
-  CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
-  OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-  OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-*/
-#include "../config.h"
-#include "dir.h"
-#include "display.h"
-#include <ncurses.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
-#include <getopt.h>
+#include <ncurses.h>
+#include "../config.h"
+#include "dir.h"
+#include "mem.h"
+#include "display.h"
+#include "clippboard.h"
 
 int main(int argc, char *argv[]) {
 
-    int x, y;
-    int curs = 0;
-    int clipboard_number = 0;
-    int option_index;
     char key;
-    WINDOW *left;
-    struct working_dir main_dir;
-
-    // What can be done here?
-    while((option_index = getopt(argc, argv, "d:")) != -1) {
-        switch (option_index) {
-            case 'd':
-                if (!is_file(optarg))
-                    chdir(optarg);
-                
-                break;
-            default:
-                break;
-                
-        }
-    }
+    struct working_dir *main_dir = NULL;
 
     // Basic Setup
-    screen_setup();
-    getmaxyx(stdscr, y, x);
-    left = newwin(x / 2, y, 0, 0);
+	main_dir = init_file_list();
 
-    // Setup window(s)
+    screen_setup();
+    getmaxyx(stdscr, main_dir->config.y, main_dir->config.x);
+	main_dir->screen = stdscr;
+
+    // Setup window
     clear();
-    wclear(left);
-    file_list(&main_dir);
-    display_path(&main_dir, left);
-    display_files(&main_dir, left, curs);
-    wrefresh(left);
+
+    wclear(main_dir->screen);
+
+    file_list(main_dir);
+    display_files(main_dir);
+    display_path(main_dir);
+
+    wrefresh(main_dir->screen);
 
     // Main loop
     while ((key = getchar()) != KEY_QUIT) {
         switch (key) {
         case KEY_MOV_UP:
-            if (curs >= 1)
-                curs--;
+            if(main_dir->cursor >= 1)
+                main_dir->cursor--;
             break;
 
         case KEY_MOV_DOWN:
-            if (curs <= main_dir.num_files - 2) // this count the "./" & "../"
-                curs++;
+            if(main_dir->cursor <= main_dir->num_files - 2)
+                main_dir->cursor++;
             break;
 
         case KEY_MOV_LEFT:
-            cd_back(&main_dir);
+            cd_back(main_dir);
             break;
 
         case KEY_MOV_RIGHT:
-            cd_enter(&main_dir, curs);
+            cd_enter(main_dir);
             break;
 
-        case KEY_FILE_DEL:
-            if (file_delete(&main_dir, left, curs) == -1)
-                display_confirm(left, 2, main_dir.file[curs],
-                                " could not be removed!");
-            break;
+		case KEY_ACT_OPEN:
+			file_open(main_dir);
+			break;
 
-        case KEY_FILE_KILL:
-            file_kill_yank(&main_dir, 0, curs, clipboard_number);
-            clipboard_number++;
-            break;
+		case KEY_ACT_HIDDEN:
+			main_dir->config.hidden_files = !main_dir->config.hidden_files;
+			file_list(main_dir);
+			break;
 
-        case KEY_FILE_YANK:
-            file_kill_yank(&main_dir, 1, curs, clipboard_number);
-            clipboard_number++;
-            break;
+		case KEY_CLIP_CLR:
+			clr_clipboard(main_dir);
+			break;
 
-        case KEY_FILE_PASTE:
-            file_paste(&main_dir);
-            clipboard_number = 0;
-            break;
+		case KEY_CLIP_ADD:
+			add_clipboard(main_dir);
+			break;
 
-        default:
-            break;
+		case KEY_CLIP_RMV:
+			rmv_clipboard(main_dir);
+			break;
+
+		case KEY_CLIP_PAS:
+			copy_clipboard(main_dir);
+			break;
+
         }
         // If terminal size has changed, update the window size
-        if (is_term_resized(y, x) == true) {
+        if(is_term_resized(main_dir->config.y, main_dir->config.x) == true) {
 
-            delwin(left);
-            getmaxyx(stdscr, y, x);
-            left = newwin(x / 2, y, 0, 0);
+            delwin(main_dir->screen);
+            getmaxyx(stdscr, main_dir->config.y, main_dir->config.x);
+            main_dir->screen = newwin(main_dir->config.x / 2,
+					main_dir->config.y, 0, 0);
         }
 
-        if (curs >= main_dir.num_files || curs < 0)
-            curs = 0;
+        if(main_dir->cursor >= main_dir->num_files || main_dir->cursor < 0)
+            main_dir->cursor = 0;
 
         // Updating Screen
-        wclear(left);
+        wclear(main_dir->screen);
 
-        display_files(&main_dir, left, curs);
-        display_path(&main_dir, left);
+        display_files(main_dir);
+        display_path(main_dir);
 
-        wrefresh(left);
+        wrefresh(main_dir->screen);
     }
 
-    // Cleaning Shit
-    delwin(left);
+    // Cleaning
+
+	free_file_list(main_dir);
+    delwin(main_dir->screen);
     endwin();
+
     return 0;
 }
