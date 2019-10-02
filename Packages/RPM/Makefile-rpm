@@ -1,4 +1,5 @@
 TARGET_EXEC = yafm
+VERSION = v1.0
 
 SRC_DIRS = ./src
 BUILD_DIR = ./build
@@ -21,7 +22,10 @@ $(BUILD_DIR)/%.c.o: %.c
 	mkdir -p $(dir $@)
 	$(CC) $(CPPFLAGS) $(CFLAGS) -c $< -o $@
 
-install:
-	cp build/yafm ~/bin/
+install: $(BUILD_DIR)/$(TARGET_EXEC)
+	mkdir -p ${DESTDIR}/usr/bin/
+
+	cp $(BUILD_DIR)/$(TARGET_EXEC) ${DESTDIR}/usr/bin/
+
 clean:
 	$(RM) -r $(BUILD_DIR)
