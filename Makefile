@@ -1,27 +1,31 @@
 TARGET_EXEC = yafm
 
-SRC_DIRS = ./src
-BUILD_DIR = ./build
+CC 		= gcc
+CLIBS 	= -lncurses -lmagic
+CFLAGS 	= -O3
+DEBUG_CFLAGS = -Wall -Werror -pedantic -ggdb3 -Wno-error=unknown-pragmas
 
-CC= gcc
-CLIBS= -lncurses -lmagic
+SRC_DIRS 	= ./src
+BUILD_DIR 	= ./build
 
 SRCS = $(shell find $(SRC_DIRS) -name *.cpp -or -name *.c -or -name *.s)
 OBJS = $(SRCS:%=$(BUILD_DIR)/%.o)
 
-INC_DIRS = $(shell find $(SRC_DIRS) -type d)
-INC_FLAGS = $(addprefix -I,$(INC_DIRS))
-
-CPPFLAGS = $(INC_FLAGS) -O3 -Wall -Werror -pedantic -ggdb3 -std=c99
-
+# Program binary
 $(BUILD_DIR)/$(TARGET_EXEC): $(OBJS)
 	$(CC) $(OBJS) -o $@ $(LDFLAGS) $(CLIBS)
 
 $(BUILD_DIR)/%.c.o: %.c
 	mkdir -p $(dir $@)
-	$(CC) $(CPPFLAGS) $(CFLAGS) -c $< -o $@
+ifdef DEBUG
+	$(CC) $(DEBUG_CFLAGS) -c $< -o $@
+else
+	$(CC) $(CFLAGS) -c $< -o $@
+endif
 
-install:
-	cp build/yafm ~/bin/
-clean:
-	$(RM) -r $(BUILD_DIR)
+install: $(BUILD_DIR)/$(TARGET_EXEC)
+	install  -g 0 -o 0 -m 0644 $(BUILD_DIR)/$(TARGET_EXEC) /usr/bin/
+	chmod +x /usr/bin/yafm
+
+clear:
+	$(RM) -rf $(BUILD_DIR)
