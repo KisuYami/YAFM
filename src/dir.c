@@ -87,34 +87,59 @@ void cd_back(struct working_dir *changing_dir) {
     file_list(changing_dir);
 }
 
+const char *file_extension(const char *filename)
+{
+
+    const char *dot = strrchr(filename, '.');
+
+    if(!dot || dot == filename)
+        return "";
+
+    return dot + 1;
+}
+
 void file_open(struct working_dir *dir)
 {
 	const char *mime;
-	char string[1024];
-	magic_t magic;
+	char string[1024+25];
 
-	magic = magic_open(MAGIC_MIME_TYPE);
-	magic_load(magic, NULL);
-	mime = magic_file(magic, dir->file[dir->cursor]);
+	pid_t child;
 
-	if(strncmp(mime, "image", 5) == 0)
-		sprintf(string, "%s %s &> /dev/null", dir->config.env[0],
-				dir->file[dir->cursor]);
+    // Get the extension
+    const char *extension = file_extension(dir->file[dir->cursor]);
 
-	else if(strncmp(mime, "video", 5) == 0)
-		sprintf(string, "%s %s &> /dev/null", dir->config.env[1],
-				dir->file[dir->cursor]);
+	if((strncmp(extension, "jpg", 3) == 0) ||
+			(strncmp(extension, "png", 3) == 0) ||
+			(strncmp(extension, "jpeg", 4) == 0)) {
+        sprintf(string, "%s \"%s/%s\" &>/dev/null",
+				dir->config.env[0], dir->path, dir->file[dir->cursor]);
+    }
 
-	else if(strncmp(mime+12, "pdf", 5) == 0)
-		sprintf(string, "%s %s &> /dev/null", dir->config.env[2],
-				dir->file[dir->cursor]);
+    else if((strncmp(extension, "mkv", 3) == 0) ||
+        (strncmp(extension, "mp4", 3) == 0)) {
 
-	if(*string != '\0') {
-		if(fork()) {
-			system(string);
-			exit(0);
-		}
+        sprintf(string, "%s \"%s/%s\" &>/dev/null",
+				dir->config.env[1], dir->path, dir->file[dir->cursor]);
+
+    }
+
+    else if(strncmp(extension, "pdf", 3) == 0) {
+        sprintf(string, "%s \"%s/%s\" &>/dev/null",
+				dir->config.env[2], dir->path, dir->file[dir->cursor]);
+    }
+
+	else
+		return; // Non listed file type found
+
+	child = fork();
+
+	if(child == 0) {
+		int fd = open("/dev/null", O_WRONLY);
+		dup2(fd, STDOUT_FILENO);
+		close(fd);
+
+		system(string);
+		exit(0);
 	}
-	magic_close(magic);
 	return;
 }
