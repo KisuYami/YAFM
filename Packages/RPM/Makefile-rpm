@@ -13,14 +13,12 @@ OBJS = $(SRCS:%=$(BUILD_DIR)/%.o)
 INC_DIRS = $(shell find $(SRC_DIRS) -type d)
 INC_FLAGS = $(addprefix -I,$(INC_DIRS))
 
-CPPFLAGS = $(INC_FLAGS) -O3 -Wall -Werror -pedantic -ggdb3 -std=c99
-
 $(BUILD_DIR)/$(TARGET_EXEC): $(OBJS)
 	$(CC) $(OBJS) -o $@ $(LDFLAGS) $(CLIBS)
 
 $(BUILD_DIR)/%.c.o: %.c
 	mkdir -p $(dir $@)
-	$(CC) $(CPPFLAGS) $(CFLAGS) -c $< -o $@
+	$(CC) -O3 -c $< -o $@
 
 install: $(BUILD_DIR)/$(TARGET_EXEC)
 	mkdir -p ${DESTDIR}/usr/bin/
