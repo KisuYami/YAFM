@@ -5,24 +5,27 @@
 
 #define PATH_MAX 4096
 
-struct working_dir {
-	int cursor;
+struct working_dir
+{
+    int cursor;
     int num_files;
     char *file[100]; // XXX
     char *path;
-	WINDOW *screen;
+    WINDOW *screen;
 
-	struct clippboard {
-		size_t mem[2]; // 0 = Total Size(unit), 1 = Used Mem
-		char **clip;
-	} clippboard;
+    struct clippboard
+    {
+        size_t mem[2]; // 0 = Total Size(unit), 1 = Used Mem
+        char **clip;
+    } clippboard;
 
-	struct config {
-		int y;
-		int x;
-		int hidden_files;
-		char *env[10];
-	} config;
+    struct config
+    {
+        int y;
+        int x;
+        int hidden_files;
+        char *env[10];
+    } config;
 
 };
 
