@@ -1,5 +1,5 @@
 TARGET_EXEC = yafm
-VERSION = v1.0
+VERSION = v1.1
 
 SRC_DIRS = ./src
 BUILD_DIR = ./build

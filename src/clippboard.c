@@ -70,10 +70,10 @@ void clr_clipboard(struct working_dir *dir)
     dir->clippboard = (struct clippboard)
     {
         .mem[0] = CLIPPBOARD_MEM_SIZE,
-                  .mem[1] = 0,
-
-                            .clip = malloc(sizeof(char) *
-                                           CLIPPBOARD_MEM_SIZE * CLIPPBOARD_STEP_SIZE),
+		.mem[1] = 0,
+		
+		.clip = malloc(sizeof(char) *
+					   CLIPPBOARD_MEM_SIZE * CLIPPBOARD_STEP_SIZE),
     };
 
     if(!dir->clippboard.clip)
