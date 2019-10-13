@@ -1,5 +1,5 @@
 Name:           yafm
-Version:        1.0
+Version:        1.1
 Release:        1%{?dist}
 Summary:        Yet Another File Manager
 License:        BSD4

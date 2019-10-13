@@ -27,22 +27,24 @@ void display_path(struct working_dir *changing_dir)
 
 void display_files(struct working_dir *changing_dir)
 {
-    for (int i = 0; i < changing_dir->num_files; i++)
+	int factor = (changing_dir->cursor >= changing_dir->config.y) ? changing_dir->cursor - changing_dir->config.y + 1 : 0;
+
+    for (int i = factor; i < changing_dir->num_files; i++)
     {
         if (i == changing_dir->cursor)
         {
             wattron(changing_dir->screen, A_STANDOUT | COLOR_PAIR(1));
-            mvwprintw(changing_dir->screen, i, 3, "%s", changing_dir->file[i]);
+            mvwprintw(changing_dir->screen, i - factor, 3, "%s", changing_dir->file[i]);
             wattroff(changing_dir->screen, A_STANDOUT | COLOR_PAIR(1));
         }
         else if (is_file(changing_dir->file[i]))
         {
             wattron(changing_dir->screen, A_BOLD | COLOR_PAIR(3));
-            mvwprintw(changing_dir->screen, i, 3, "%s", changing_dir->file[i]);
+            mvwprintw(changing_dir->screen, i - factor, 3, "%s", changing_dir->file[i]);
             wattroff(changing_dir->screen, A_BOLD | COLOR_PAIR(3));
         }
         else
-            mvwprintw(changing_dir->screen, i, 3, "%s", changing_dir->file[i]);
+            mvwprintw(changing_dir->screen, i - factor, 3, "%s", changing_dir->file[i]);
     }
 }
 

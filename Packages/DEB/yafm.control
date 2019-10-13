@@ -1,5 +1,5 @@
 Package: YAFM
-Version: 1.0
+Version: 1.1
 Section: custom
 Priority: optional
 Depends: libncurses (>=6)
