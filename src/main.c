@@ -1,20 +1,20 @@
-#include <stdio.h>
+#include <ncurses.h>
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
-#include <ncurses.h>
+#include <stdio.h>
+
 #include "../config.h"
+#include "display.h"
 #include "dir.h"
 #include "mem.h"
-#include "display.h"
-#include "clippboard.h"
 
 int
 main(void)
 {
 
     char key;
-    struct working_dir *main_dir = NULL;
+    dir_t *main_dir = NULL;
 
     // Basic Setup
     main_dir = init_file_list();
@@ -61,32 +61,18 @@ main(void)
             file_open(main_dir);
             break;
 
+        case KEY_ACT_DEL:
+            file_delete(main_dir);
+            break;
+
         case KEY_ACT_HIDDEN:
             main_dir->config.hidden_files = !main_dir->config.hidden_files;
             file_list(main_dir);
             break;
-
-        case KEY_CLIP_CLR:
-            clr_clipboard(main_dir);
-            break;
-
-        case KEY_CLIP_ADD:
-            add_clipboard(main_dir);
-            break;
-
-        case KEY_CLIP_RMV:
-            rmv_clipboard(main_dir);
-            break;
-
-        case KEY_CLIP_PAS:
-            copy_clipboard(main_dir);
-            break;
-
         }
         // If terminal size has changed, update the window size
         if(is_term_resized(main_dir->config.y, main_dir->config.x) == true)
         {
-
             delwin(main_dir->screen);
             getmaxyx(stdscr, main_dir->config.y, main_dir->config.x);
             main_dir->screen = newwin(main_dir->config.x / 2,

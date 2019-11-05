@@ -13,12 +13,6 @@ struct working_dir
     char *path;
     WINDOW *screen;
 
-    struct clippboard
-    {
-        size_t mem[2]; // 0 = Total Size(unit), 1 = Used Mem
-        char **clip;
-    } clippboard;
-
     struct config
     {
         int y;
@@ -29,12 +23,23 @@ struct working_dir
 
 };
 
-int file_list(struct working_dir *changing_dir);
-void file_open(struct working_dir *changing_dir);
+typedef struct working_dir dir_t;
 
-int cd_enter(struct working_dir *changing_dir);
-void cd_back(struct working_dir *changing_dir);
+int
+is_file(char *path);
 
-int is_file(char *path);
+int
+file_list(dir_t *changing_dir);
 
+void
+file_open(dir_t *changing_dir);
+
+int
+cd_enter(dir_t *changing_dir);
+
+void
+cd_back(dir_t *changing_dir);
+
+int
+file_delete(dir_t *changing_dir);
 #endif

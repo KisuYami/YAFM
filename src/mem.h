@@ -3,8 +3,8 @@
 
 #include "dir.h"
 
-struct working_dir *init_file_list();
-void free_file_list(struct working_dir *list);
+dir_t *init_file_list();
+void free_file_list(dir_t *list);
 void *resize_ptr(void *ptr, size_t new_size);
 
 #endif

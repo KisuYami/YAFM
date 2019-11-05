@@ -1,7 +1,7 @@
 TARGET_EXEC = yafm
 
 CC 		= gcc
-CLIBS 	= -lncurses -lmagic
+CLIBS 	= -lncurses
 CFLAGS 	= -O3
 DEBUG_CFLAGS = -Wall -Werror -pedantic -ggdb3 -Wno-error=unknown-pragmas
 
@@ -24,8 +24,9 @@ else
 endif
 
 install: $(BUILD_DIR)/$(TARGET_EXEC)
-	install  -g 0 -o 0 -m 0644 $(BUILD_DIR)/$(TARGET_EXEC) /usr/bin/
-	chmod +x /usr/bin/yafm
 
-clear:
+	mkdir -p ${DESTDIR}/usr/bin/
+	cp $(BUILD_DIR)/$(TARGET_EXEC) ${DESTDIR}/usr/bin/
+
+clean:
 	$(RM) -rf $(BUILD_DIR)
