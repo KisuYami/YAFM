@@ -7,13 +7,8 @@
 #define KEY_MOV_LEFT	'h'
 #define KEY_MOV_RIGHT	'l'
 
+#define KEY_ACT_DEL	    'd'
 #define KEY_ACT_OPEN	'o'
 #define KEY_ACT_HIDDEN	'z'
-
-#define KEY_CLIP_ADD 'y'
-#define KEY_CLIP_RMV 'Y'
-#define KEY_CLIP_PAS 'p'
-
-#define KEY_CLIP_CLR 'c'
 
 #endif

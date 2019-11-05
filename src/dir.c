@@ -1,29 +1,39 @@
-#include <stdio.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <sys/wait.h>
+#include <ncurses.h>
+#include <dirent.h>
+#include <string.h>
 #include <stddef.h>
 #include <stdlib.h>
-#include <string.h>
 #include <unistd.h>
-#include <magic.h>
 #include <fcntl.h>
-#include <dirent.h>
-#include <ncurses.h>
-#include <sys/stat.h>
-#include <sys/types.h>
-#include <sys/wait.h>
+#include <stdio.h>
+
 #include "dir.h"
 #include "display.h"
 
-static int compare(const void *p1, const void *p2)
+static int
+compare(const void *p1, const void *p2)
 {
     return strcmp(*(char *const *)p1, *(char *const *)p2);
 }
 
-int file_list(struct working_dir *changing_dir)
+int
+is_file(char *path)
+{
+    struct stat path_to_file;
+    stat(path, &path_to_file);
+    return S_ISREG(path_to_file.st_mode);
+}
+
+int
+file_list(dir_t *changing_dir)
 {
 
     int i = 0;
     DIR *d = NULL;
-    struct dirent *dir;
+    struct dirent *dir = NULL;
 
     getcwd(changing_dir->path, PATH_MAX);
     d = opendir(changing_dir->path);
@@ -50,14 +60,8 @@ int file_list(struct working_dir *changing_dir)
     return i;
 }
 
-int is_file(char *path)
-{
-    struct stat path_to_file;
-    stat(path, &path_to_file);
-    return S_ISREG(path_to_file.st_mode);
-}
-
-int cd_enter(struct working_dir *changing_dir)
+int
+cd_enter(dir_t *changing_dir)
 {
 
     if(changing_dir->cursor >= changing_dir->num_files)
@@ -71,20 +75,17 @@ int cd_enter(struct working_dir *changing_dir)
     return 0;
 }
 
-void cd_back(struct working_dir *changing_dir)
+void
+cd_back(dir_t *changing_dir)
 {
 
-    for(unsigned int i = strlen(changing_dir->path); i >= 0; --i)
+    for(size_t i = strlen(changing_dir->path); i >= 0; --i)
     {
-
         if (changing_dir->path[i] == '/')
         {
-
             changing_dir->path[i] = '\0';
             break;
-
         }
-
     }
 
     if(!is_file(changing_dir->path))
@@ -93,9 +94,9 @@ void cd_back(struct working_dir *changing_dir)
     file_list(changing_dir);
 }
 
-const char *file_extension(const char *filename)
+const char *
+file_extension(const char *filename)
 {
-
     const char *dot = strrchr(filename, '.');
 
     if(!dot || dot == filename)
@@ -104,66 +105,65 @@ const char *file_extension(const char *filename)
     return dot + 1;
 }
 
-void file_open(struct working_dir *dir)
+void
+file_open(dir_t *dir)
 {
-    char string[1024+25];
-
-    pid_t child;
-
     // Get the extension
     const char *extension = file_extension(dir->file[dir->cursor]);
 
+    int file_type = -1;
+
     if((strncmp(extension, "jpg", 3) == 0) ||
-            (strncmp(extension, "png", 3) == 0) ||
-            (strncmp(extension, "jpeg", 4) == 0))
-    {
-        if (dir->config.env[0] == NULL)
-        {
-            mvprintw(dir->config.x, dir->config.y, "YAFM: Cound't find ENV var");
-            return;
-        }
-        sprintf(string, "%s \"%s/%s\" &>/dev/null",
-                dir->config.env[0], dir->path, dir->file[dir->cursor]);
-    }
+       (strncmp(extension, "png", 3) == 0) ||
+       (strncmp(extension, "jpeg", 4) == 0))
+        file_type = 0;
 
     else if((strncmp(extension, "mkv", 3) == 0) ||
             (strncmp(extension, "mp4", 3) == 0))
-    {
-        if (dir->config.env[1] == NULL)
-        {
-            mvprintw(dir->config.x, dir->config.y, "YAFM: Cound't find ENV var");
-            return;
-        }
-
-        sprintf(string, "%s \"%s/%s\" &>/dev/null",
-                dir->config.env[1], dir->path, dir->file[dir->cursor]);
-
-    }
+		file_type = 1;
 
     else if(strncmp(extension, "pdf", 3) == 0)
-    {
-        if (dir->config.env[2] == NULL)
-        {
-            mvprintw(dir->config.x, dir->config.y, "YAFM: Cound't find ENV var");
-            return;
-        }
-        sprintf(string, "%s \"%s/%s\" &>/dev/null",
-                dir->config.env[2], dir->path, dir->file[dir->cursor]);
-    }
+		file_type = 2;
 
-    else
+    else if(file_type == -1)
         return; // Non listed file type found
 
-    child = fork();
+	if(!dir->config.env[file_type])
+	{
+		fprintf(stderr, "YAFM: enviroment variable missing");
+		return;
+	}
+
+    pid_t child = fork();
 
     if(child == 0)
     {
         int fd = open("/dev/null", O_WRONLY);
+		// No output or input
         dup2(fd, STDOUT_FILENO);
+        dup2(fd, STDIN_FILENO);
+        dup2(fd, STDERR_FILENO);
         close(fd);
 
-        system(string);
+		execlp(dir->config.env[file_type], dir->config.env[file_type], dir->file[dir->cursor]);
         exit(0);
     }
+
     return;
+}
+
+int
+file_delete(dir_t *changing_dir)
+{
+    if(display_confirm(changing_dir->screen, 2, "Proceed with deletion of ",
+                        changing_dir->file[changing_dir->cursor], "?") == 0)
+	{
+		char absolute_path[PATH_MAX];
+        snprintf(absolute_path, PATH_MAX + 2, "%s/%s", changing_dir->path,
+                 changing_dir->file[changing_dir->cursor]);
+
+		remove(absolute_path); // Delete the file, see man 3 remove
+        file_list(changing_dir);
+    }
+	return 0;
 }
