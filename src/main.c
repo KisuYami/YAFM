@@ -1,101 +1,159 @@
-#include <ncurses.h>
-#include <stdlib.h>
-#include <string.h>
 #include <unistd.h>
-#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
 
-#include "../config.h"
-#include "display.h"
 #include "dir.h"
-#include "mem.h"
+#include "display.h"
+#include "clipboard.h"
+#include "../config.h"
 
 int
 main(void)
 {
+	screen_setup();
 
-    char key;
-    dir_t *main_dir = NULL;
+	config.envp[0] = getenv("IMAGE");
+	config.envp[1] = getenv("VIDEO");
+	config.envp[2] = getenv("DOCUMENTS");
 
-    // Basic Setup
-    main_dir = init_file_list();
+	struct dir_display main_display, preview_display;
 
-    screen_setup();
-    getmaxyx(stdscr, main_dir->config.y, main_dir->config.x);
-    main_dir->screen = stdscr;
+	list_files(&main_display, NULL);
+	main_display.position = (struct position) {
+		.y[0] = 0,
+		.y[1] = config.size.y - 1,
+		.x[0] = 0,
+		.x[1] = config.size.x/2,
+	};
 
-    // Setup window
-    clear();
+	preview_display.position = (struct position) {
+		.y[0] = 0,
+		.y[1] = config.size.y - 1,
+		.x[0] = config.size.x/2,
+		.x[1] = config.size.x/2,
+	};
 
-    wclear(main_dir->screen);
+	main_display.screen = newwin(main_display.position.y[1],
+				     main_display.position.x[1],
+				     main_display.position.y[0],
+				     main_display.position.x[0]);
 
-    file_list(main_dir);
-    display_files(main_dir);
-    display_path(main_dir);
+	preview_display.screen = newwin(preview_display.position.y[1],
+					preview_display.position.x[1],
+					preview_display.position.y[0],
+					preview_display.position.x[0]);
 
-    wrefresh(main_dir->screen);
+	clear();
+	attron(A_UNDERLINE);
+	mvwprintw(stdscr, config.size.y-1, 0, config.path);
+	attroff(A_UNDERLINE);
+	refresh();
 
-    // Main loop
-    while ((key = getchar()) != KEY_QUIT)
-    {
-        switch (key)
-        {
-        case KEY_MOV_UP:
-            if(main_dir->cursor >= 1)
-                main_dir->cursor--;
-            break;
+	preview_display_files(&main_display, &preview_display, 0);
 
-        case KEY_MOV_DOWN:
-            if(main_dir->cursor <= main_dir->num_files - 2)
-                main_dir->cursor++;
-            break;
+	wclear(main_display.screen);
+	display_files(main_display, 0);
+	wrefresh(main_display.screen);
 
-        case KEY_MOV_LEFT:
-            cd_back(main_dir);
-            break;
+	int cursor = 0;
 
-        case KEY_MOV_RIGHT:
-            cd_enter(main_dir);
-            break;
+	for(char key = getch(); key != KEY_QUIT; key = getch())
+	{
+		int redraw_flag = 0;
+		switch(key)
+		{
+		case KEY_MOV_UP:
+			if(cursor > 0) cursor--;
+			break;
 
-        case KEY_ACT_OPEN:
-            file_open(main_dir);
-            break;
+		case KEY_MOV_DOWN:
+			// cursor+1: because i need the info about where
+			// the cursor will be, not where it is.
+			if(cursor+1 < main_display.files.size) cursor++;
+			break;
 
-        case KEY_ACT_DEL:
-            file_delete(main_dir);
-            break;
+		case KEY_MOV_LEFT:
+		{
+			char *tmp = strrchr(config.path, '/');
 
-        case KEY_ACT_HIDDEN:
-            main_dir->config.hidden_files = !main_dir->config.hidden_files;
-            file_list(main_dir);
-            break;
-        }
-        // If terminal size has changed, update the window size
-        if(is_term_resized(main_dir->config.y, main_dir->config.x) == true)
-        {
-            delwin(main_dir->screen);
-            getmaxyx(stdscr, main_dir->config.y, main_dir->config.x);
-            main_dir->screen = newwin(main_dir->config.x / 2,
-                                      main_dir->config.y, 0, 0);
-        }
+			if(tmp != NULL)
+			{
+				tmp[0] = '\0';
 
-        if(main_dir->cursor >= main_dir->num_files || main_dir->cursor < 0)
-            main_dir->cursor = 0;
+				chdir(config.path);
+				list_files(&main_display, NULL);
 
-        // Updating Screen
-        wclear(main_dir->screen);
+				cursor = 0;
+				redraw_flag = 1;
+			}
+			break;
+		}
+		case KEY_MOV_RIGHT:
+			if(chdir(main_display.files.list[cursor]) == 0)
+			{
+				list_files(&main_display, NULL);
+				cursor = 0;
+				redraw_flag = 1;
+			}
+			break;
 
-        display_files(main_dir);
-        display_path(main_dir);
+		case KEY_FILE_OPEN:
+			file_open(&main_display, cursor);
+			break;
 
-        wrefresh(main_dir->screen);
-    }
+		case KEY_FILE_MARK:
+			main_display.files.marked[cursor] =
+				!main_display.files.marked[cursor];
 
-    // Cleaning
+			redraw_flag = 1;
+			break;
 
-    free_file_list(main_dir);
-    delwin(main_dir->screen);
-    endwin();
+		case KEY_FILE_HIDDEN:
+			config.hidden = !config.hidden;
+			list_files(&main_display, NULL);
+			break;
 
-    return 0;
+		case KEY_FILE_DEL:
+			if(display_confirm(0, "Procced with deletion of files?") == 0)
+			{
+				selection_del(&main_display);
+				list_files(&main_display, NULL);
+				cursor = 0;
+			}
+			redraw_flag = 1;
+
+			break;
+
+		case KEY_FILE_YANK:
+			selection_yank(&main_display);
+			break;
+
+		case KEY_FILE_CUT:
+			selection_cut(&main_display);
+			break;
+
+		case KEY_FILE_PASTE:
+			selection_paste();
+			break;
+		}
+
+		if(redraw_flag != 0)
+		{
+			clear();
+			attron(A_UNDERLINE);
+			mvwprintw(stdscr, config.size.y-1, 0, config.path);
+			attroff(A_UNDERLINE);
+			refresh();
+		}
+
+		wclear(main_display.screen);
+		display_files(main_display, cursor);
+		wrefresh(main_display.screen);
+		preview_display_files(&main_display, &preview_display, cursor);
+	}
+
+	endwin();
+	delwin(main_display.screen);
+	delwin(preview_display.screen);
+	return 0;
 }

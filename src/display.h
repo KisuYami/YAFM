@@ -1,19 +1,19 @@
 #ifndef DISPLAY_H
 #define DISPLAY_H
 
-#include <ncurses.h>
 #include "dir.h"
 
 void
-screen_setup();
+screen_setup(void);
 
 void
-display_path(dir_t *changing_dir);
+display_files(struct dir_display dir_display, int cursor);
 
 void
-display_files(dir_t *changing_dir);
+preview_display_files(struct dir_display *main_display,
+		      struct dir_display *preview_display,
+		      int cursor);
 
 int
-display_confirm(WINDOW *screen, int phrase_argc, char *phrase_input, ...);
-
+display_confirm(int phrase_argc, char *phrase_input, ...);
 #endif /* DISPLAY_H */

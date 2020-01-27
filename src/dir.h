@@ -1,45 +1,50 @@
-#ifndef DIR_HEADER
-#define DIR_HEADER
+#ifndef DIR_H
+#define DIR_H
 
 #include <ncurses.h>
+#include <stddef.h>
 
-#define PATH_MAX 4096
-
-struct working_dir
+struct config
 {
-    int cursor;
-    int num_files;
-    char *file[100]; // XXX
-    char *path;
-    WINDOW *screen;
+	short int hidden; // 1 = show hidden files
+	char *envp[3];
+	char path[1024];
 
-    struct config
-    {
-        int y;
-        int x;
-        int hidden_files;
-        char *env[10];
-    } config;
+	struct size
+	{
+		size_t x;
+		size_t y;
+	} size;
+} config;
 
+struct dir_display
+{
+	WINDOW *screen;
+
+	struct files
+	{
+		size_t size;
+
+		int  marked[100];
+		char list[100][1024]; // XXX
+	} files;
+
+	struct position
+	{
+		int x[2];
+		int y[2];
+	} position;
 };
-
-typedef struct working_dir dir_t;
 
 int
 is_file(char *path);
 
-int
-file_list(dir_t *changing_dir);
+void
+list_files(struct dir_display *dir_display, char *path);
 
 void
-file_open(dir_t *changing_dir);
-
-int
-cd_enter(dir_t *changing_dir);
+preview_list_files(struct dir_display *parent_dir, struct dir_display *child_dir, int cursor);
 
 void
-cd_back(dir_t *changing_dir);
-
-int
-file_delete(dir_t *changing_dir);
-#endif
+file_open(struct dir_display *dir, int cursor);
+#endif /* DIR_H */

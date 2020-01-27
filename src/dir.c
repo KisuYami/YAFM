@@ -1,6 +1,5 @@
 #include <sys/types.h>
 #include <sys/stat.h>
-#include <sys/wait.h>
 #include <ncurses.h>
 #include <dirent.h>
 #include <string.h>
@@ -8,162 +7,131 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <fcntl.h>
-#include <stdio.h>
 
 #include "dir.h"
-#include "display.h"
 
 static int
 compare(const void *p1, const void *p2)
 {
-    return strcmp(*(char *const *)p1, *(char *const *)p2);
+	return strcmp(*(char *const *)p1, *(char *const *)p2);
 }
 
 int
 is_file(char *path)
 {
-    struct stat path_to_file;
-    stat(path, &path_to_file);
-    return S_ISREG(path_to_file.st_mode);
-}
-
-int
-file_list(dir_t *changing_dir)
-{
-
-    int i = 0;
-    DIR *d = NULL;
-    struct dirent *dir = NULL;
-
-    getcwd(changing_dir->path, PATH_MAX);
-    d = opendir(changing_dir->path);
-
-    while ((dir = readdir(d)) != NULL)
-    {
-        if(changing_dir->config.hidden_files)
-        {
-            changing_dir->file[i] = dir->d_name;
-            i++;
-        }
-        else if (*dir->d_name != '.')   // Don't Show hidden files
-        {
-            changing_dir->file[i] = dir->d_name;
-            i++;
-        }
-    }
-
-    closedir(d);
-
-    changing_dir->num_files = i;
-    qsort(&changing_dir->file[0], i, sizeof(char *), compare);
-
-    return i;
-}
-
-int
-cd_enter(dir_t *changing_dir)
-{
-
-    if(changing_dir->cursor >= changing_dir->num_files)
-        return 1;
-
-    if(!is_file(changing_dir->file[changing_dir->cursor]))
-        chdir(changing_dir->file[changing_dir->cursor]);
-
-    file_list(changing_dir);
-
-    return 0;
+	struct stat path_to_file;
+	stat(path, &path_to_file);
+	return S_ISDIR(path_to_file.st_mode);
 }
 
 void
-cd_back(dir_t *changing_dir)
+list_files(struct dir_display *dir_display, char *path)
 {
+	memset(dir_display->files.marked, 0, sizeof(int) * 100); // XXX
+	dir_display->files.size = 0;
 
-    for(size_t i = strlen(changing_dir->path); i >= 0; --i)
-    {
-        if (changing_dir->path[i] == '/')
-        {
-            changing_dir->path[i] = '\0';
-            break;
-        }
-    }
+	DIR *d = NULL;
+	char *tmp_list[100];
+	size_t i = 0;
 
-    if(!is_file(changing_dir->path))
-        chdir(changing_dir->path);
 
-    file_list(changing_dir);
+	if(path == NULL)
+	{
+		getcwd(config.path, PATH_MAX);
+		d = opendir(config.path);
+	}
+
+	else
+	{
+		if(!is_file(path)) return;
+		d = opendir(path);
+	}
+
+	for(struct dirent *dir = readdir(d); dir != NULL; dir = readdir(d))
+	{
+		// Don't Show hidden files
+		if(config.hidden || *dir->d_name != '.')
+			tmp_list[i++] = dir->d_name;
+	}
+
+	qsort(&tmp_list[0], i, sizeof(char *), compare);
+
+	for(dir_display->files.size = 0;
+	    dir_display->files.size < i;
+	    ++dir_display->files.size)
+	{
+		strcpy(dir_display->files.list[dir_display->files.size],
+		       tmp_list[dir_display->files.size]);
+	}
+
+	closedir(d);
 }
 
-const char *
+void
+preview_list_files(struct dir_display *parent_dir,
+		   struct dir_display *child_dir, int cursor)
+{
+	char tmp[1024];
+	strcpy(tmp, config.path);
+	strcat(tmp, "/");
+	strcat(tmp, parent_dir->files.list[cursor]);
+	list_files(child_dir, tmp);
+}
+
+static const char *
 file_extension(const char *filename)
 {
-    const char *dot = strrchr(filename, '.');
+	const char *dot = strrchr(filename, '.');
 
-    if(!dot || dot == filename)
-        return "";
+	if(!dot || dot == filename)
+		return "";
 
-    return dot + 1;
+	return dot + 1;
 }
 
 void
-file_open(dir_t *dir)
+file_open(struct dir_display *dir, int cursor)
 {
-    // Get the extension
-    const char *extension = file_extension(dir->file[dir->cursor]);
+	// Get the extension
+	const char *extension = file_extension(dir->files.list[cursor]);
 
-    int file_type = -1;
+	int file_type = -1;
 
-    if((strncmp(extension, "jpg", 3) == 0) ||
-       (strncmp(extension, "png", 3) == 0) ||
-       (strncmp(extension, "jpeg", 4) == 0))
-        file_type = 0;
+	if((strncmp(extension, "jpg", 3) == 0) ||
+	   (strncmp(extension, "png", 3) == 0) ||
+	   (strncmp(extension, "jpeg", 4) == 0))
+		file_type = 0;
 
-    else if((strncmp(extension, "mkv", 3) == 0) ||
-            (strncmp(extension, "mp4", 3) == 0))
+	else if((strncmp(extension, "mkv", 3) == 0) ||
+		(strncmp(extension, "mp4", 3) == 0))
 		file_type = 1;
 
-    else if(strncmp(extension, "pdf", 3) == 0)
+	else if(strncmp(extension, "pdf", 3) == 0)
 		file_type = 2;
 
-    else if(file_type == -1)
-        return; // Non listed file type found
+	else if(file_type == -1)
+		return; // Non listed file type found
 
-	if(!dir->config.env[file_type])
+	if(!config.envp[file_type])
 	{
 		fprintf(stderr, "YAFM: enviroment variable missing");
 		return;
 	}
 
-    pid_t child = fork();
+	pid_t child = fork();
 
-    if(child == 0)
-    {
-        int fd = open("/dev/null", O_WRONLY);
-		// No output or input
-        dup2(fd, STDOUT_FILENO);
-        dup2(fd, STDIN_FILENO);
-        dup2(fd, STDERR_FILENO);
-        close(fd);
-
-		execlp(dir->config.env[file_type], dir->config.env[file_type], dir->file[dir->cursor]);
-        exit(0);
-    }
-
-    return;
-}
-
-int
-file_delete(dir_t *changing_dir)
-{
-    if(display_confirm(changing_dir->screen, 2, "Proceed with deletion of ",
-                        changing_dir->file[changing_dir->cursor], "?") == 0)
+	if(child == 0)
 	{
-		char absolute_path[PATH_MAX];
-        snprintf(absolute_path, PATH_MAX + 2, "%s/%s", changing_dir->path,
-                 changing_dir->file[changing_dir->cursor]);
+		int fd = open("/dev/null", O_WRONLY);
+		// No output or input
+		dup2(fd, STDOUT_FILENO);
+		dup2(fd, STDIN_FILENO);
+		dup2(fd, STDERR_FILENO);
+		close(fd);
 
-		remove(absolute_path); // Delete the file, see man 3 remove
-        file_list(changing_dir);
-    }
-	return 0;
+		execlp(config.envp[file_type],
+		       config.envp[file_type],
+		       dir->files.list[cursor], (char *)NULL);
+		exit(0);
+	}
 }
