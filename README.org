@@ -9,5 +9,19 @@ make
 sudo make install
 #+END_SRC
 
+** Keybinds
+|---------+----------------------|
+| Key     | Action               |
+|---------+----------------------|
+| =k=     | Up                   |
+| =j=     | Down                 |
+| =h=     | Left                 |
+| =l=     | Right                |
+| =z=     | Hidde/Show dot files |
+| =space= | Mark Files           |
+| =y=     | Yank                 |
+| =d=     | cut                  |
+| =D=     | delete               |
+|---------+----------------------|
 ** About
 Don't use it.
