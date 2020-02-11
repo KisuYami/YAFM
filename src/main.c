@@ -120,8 +120,8 @@ main(void)
 				list_files(&main_display, NULL);
 				cursor = 0;
 			}
-			redraw_flag = 1;
 
+			redraw_flag = 1;
 			break;
 
 		case KEY_FILE_YANK:
@@ -137,6 +137,42 @@ main(void)
 			break;
 		}
 
+		// If terminal size has changed, update the window size
+		if(is_term_resized(config.size.y, config.size.x) == true)
+		{
+
+			getmaxyx(stdscr, config.size.y, config.size.x);
+
+			main_display.position = (struct position) {
+				.y[0] = 0,
+				.y[1] = config.size.y - 1,
+				.x[0] = 0,
+				.x[1] = config.size.x/2,
+			};
+
+			preview_display.position = (struct position) {
+				.y[0] = 0,
+				.y[1] = config.size.y - 1,
+				.x[0] = config.size.x/2,
+				.x[1] = config.size.x/2,
+			};
+
+			delwin(main_display.screen);
+			delwin(preview_display.screen);
+
+			main_display.screen = newwin(main_display.position.y[1],
+						     main_display.position.x[1],
+						     main_display.position.y[0],
+						     main_display.position.x[0]);
+
+			preview_display.screen = newwin(preview_display.position.y[1],
+							preview_display.position.x[1],
+							preview_display.position.y[0],
+							preview_display.position.x[0]);
+
+			redraw_flag = 1;
+		}
+
 		if(redraw_flag != 0)
 		{
 			clear();
@@ -149,6 +185,7 @@ main(void)
 		wclear(main_display.screen);
 		display_files(main_display, cursor);
 		wrefresh(main_display.screen);
+
 		preview_display_files(&main_display, &preview_display, cursor);
 	}
 

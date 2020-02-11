@@ -1,9 +1,7 @@
 * Yet Another File Manager
-
 Like ranger, but worse, and in C.
 
 ** Install
-
 #+BEGIN_SRC sh
 make
 sudo make install
