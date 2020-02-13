@@ -37,9 +37,21 @@ selection_cut(struct dir_display *dir_display)
 	file_selection.type = SEC_CLIP_YANK;
 }
 
-void
+int
 selection_del(struct dir_display *dir_display)
 {
+	char phrase_final[38] = "Procced with deletion of files? (y/n)";
+	move(config.size.y - 1, 0); // move to begining of line
+	clrtoeol();	  // Clean displayed path
+
+	mvprintw(config.size.y - 1, 1, phrase_final);
+	refresh();
+
+	char key = getchar();
+
+	if(key != 'y')
+		return -1; // user answear wans't "Yes"
+
 	selection_copy(dir_display);
 	for(size_t i = 0; i < file_selection.size; ++i)
 	{
@@ -48,6 +60,8 @@ selection_del(struct dir_display *dir_display)
 			       file_selection.files[i],
 			       (char *)NULL);
 	}
+
+	return 0;
 }
 
 void

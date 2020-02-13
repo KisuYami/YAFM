@@ -1,4 +1,4 @@
-TARGET_EXEC = yafm
+TARGET_EXEC = kyfm
 
 CC 		= gcc
 CLIBS 	= -lncurses
@@ -24,9 +24,15 @@ else
 endif
 
 install: $(BUILD_DIR)/$(TARGET_EXEC)
+	install -Dm664 $(BUILD_DIR)/$(TARGET_EXEC) ${DESTDIR}/usr/bin/
+	chmod +x $(DESTDIR)/usr/bin/$(TARGET_EXEC)
 
-	mkdir -p ${DESTDIR}/usr/bin/
-	cp $(BUILD_DIR)/$(TARGET_EXEC) ${DESTDIR}/usr/bin/
+pkg:
+	makepkg
 
 clean:
-	$(RM) -rf $(BUILD_DIR)
+	$(RM) -r $(BUILD_DIR)
+	$(RM) -r pkg
+	$(RM) -r kyfm
+	$(RM) -r src/kyfm
+	$(RM) -r *.pkg.*

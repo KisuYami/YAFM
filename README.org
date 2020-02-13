@@ -21,5 +21,3 @@ sudo make install
 | =d=     | cut                  |
 | =D=     | delete               |
 |---------+----------------------|
-** About
-Don't use it.
