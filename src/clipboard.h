@@ -23,7 +23,7 @@ selection_yank(struct dir_display *dir_display);
 void
 selection_cut(struct dir_display *dir_display);
 
-void
+int
 selection_del(struct dir_display *dir_display);
 
 void

@@ -97,35 +97,3 @@ preview_display_files(struct dir_display *main_display,
 	}
 	wrefresh(preview_display->screen);
 }
-
-int
-display_confirm(int phrase_argc, char *phrase_input, ...)
-{
-	char phrase_final[1024];
-	va_list phrase_list;
-
-	strcpy(phrase_final, phrase_input);
-	va_start(phrase_list, phrase_input);
-	for(int x = 0; x < phrase_argc; x++) {
-		char *tmp = va_arg(phrase_list, char *);
-		strcat(phrase_final, tmp);
-	}
-	va_end(phrase_list);
-
-	strcat(phrase_final, " (y/n)");
-	move(config.size.y - 1, 0); // move to begining of line
-	clrtoeol();	  // Clean displayed path
-
-	mvprintw(config.size.y - 1, 1, phrase_final);
-	refresh();
-
-	char key = getchar();
-
-	if (key == 'y')
-		return 0; // Yes
-
-	if (key == 'n')
-		return 1; // no
-
-	return -1;
-}

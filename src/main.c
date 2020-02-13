@@ -114,9 +114,8 @@ main(void)
 			break;
 
 		case KEY_FILE_DEL:
-			if(display_confirm(0, "Procced with deletion of files?") == 0)
+			if(selection_del(&main_display) == 0)
 			{
-				selection_del(&main_display);
 				list_files(&main_display, NULL);
 				cursor = 0;
 			}

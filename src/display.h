@@ -13,7 +13,4 @@ void
 preview_display_files(struct dir_display *main_display,
 		      struct dir_display *preview_display,
 		      int cursor);
-
-int
-display_confirm(int phrase_argc, char *phrase_input, ...);
 #endif /* DISPLAY_H */
