@@ -80,7 +80,9 @@ main(void)
 			{
 				tmp[0] = '\0';
 
-				chdir(config.path);
+				if(chdir(config.path) != 0) // XXX, so we can cd '/'
+					chdir("/");
+
 				list_files(&main_display, NULL);
 
 				cursor = 0;
@@ -95,6 +97,7 @@ main(void)
 				cursor = 0;
 				redraw_flag = 1;
 			}
+
 			break;
 
 		case KEY_FILE_OPEN:
