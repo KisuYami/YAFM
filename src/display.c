@@ -79,7 +79,8 @@ preview_display_files(struct dir_display *main_display,
 		      struct dir_display *preview_display,
 		      int cursor)
 {
-	preview_list_files(main_display, preview_display, cursor);
+	if(preview_list_files(main_display, preview_display, cursor) != 0)
+		return;
 
 	wclear(preview_display->screen);
 	for(int i = 0; i < preview_display->files.size; i++)
