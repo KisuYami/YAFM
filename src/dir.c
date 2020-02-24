@@ -47,7 +47,8 @@ list_files(struct dir_display *dir_display, char *path)
 		d = opendir(path);
 	}
 
-	for(struct dirent *dir = readdir(d); dir != NULL; dir = readdir(d))
+	for(struct dirent *dir = readdir(d); dir != NULL &&
+        i < (sizeof(tmp_list) / sizeof(char *)); dir = readdir(d))
 	{
 		// Don't Show hidden files
 		if(config.hidden || *dir->d_name != '.')
