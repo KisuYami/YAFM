@@ -23,7 +23,7 @@ struct dir_display
 
 	struct files
 	{
-		size_t size;
+		int size;
 
 		int  marked[100];
 		char list[100][1024]; // XXX
