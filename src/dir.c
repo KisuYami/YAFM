@@ -24,32 +24,54 @@ is_file(char *path)
 	return S_ISDIR(path_to_file.st_mode);
 }
 
-void
+int
 list_files(struct dir_display *dir_display, char *path)
 {
 	memset(dir_display->files.marked, 0, sizeof(int) * 100); // XXX
 	dir_display->files.size = 0;
 
 	DIR *d = NULL;
-	char *tmp_list[100];
-	size_t i = 0;
-
 
 	if(path == NULL)
 	{
 		getcwd(config.path, PATH_MAX);
 		d = opendir(config.path);
+
+		if(!d) return -1;
 	}
 
 	else
 	{
-		if(!is_file(path)) return;
+		if(!is_file(path))
+			return -1;
+
 		d = opendir(path);
+
+		if(!d) return -1;
 	}
 
-	for(struct dirent *dir = readdir(d); dir != NULL &&
-        i < (sizeof(tmp_list) / sizeof(char *)); dir = readdir(d))
+	size_t i = 0;
+
+	size_t count_list = 100;
+	char **tmp_list = calloc(count_list, sizeof(char **));
+
+	for(struct dirent *dir = readdir(d);
+	    dir != NULL && i < 100;
+	    dir = readdir(d))
 	{
+		if(i >= count_list)
+		{
+			count_list += 100;
+			char **tmp = realloc(tmp_list,
+					   count_list * sizeof(char **));
+			if(tmp)
+				tmp_list = tmp;
+			else
+			{
+				free(tmp_list);
+				return -1;
+			}
+		}
 		// Don't Show hidden files
 		if(config.hidden || *dir->d_name != '.')
 			tmp_list[i++] = dir->d_name;
@@ -65,10 +87,13 @@ list_files(struct dir_display *dir_display, char *path)
 		       tmp_list[dir_display->files.size]);
 	}
 
+	free(tmp_list);
 	closedir(d);
+
+	return 0;
 }
 
-void
+int
 preview_list_files(struct dir_display *parent_dir,
 		   struct dir_display *child_dir, int cursor)
 {
@@ -76,7 +101,11 @@ preview_list_files(struct dir_display *parent_dir,
 	strcpy(tmp, config.path);
 	strcat(tmp, "/");
 	strcat(tmp, parent_dir->files.list[cursor]);
-	list_files(child_dir, tmp);
+
+	wclear(child_dir->screen);
+	wrefresh(child_dir->screen);
+
+	return list_files(child_dir, tmp);
 }
 
 static const char *

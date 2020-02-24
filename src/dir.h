@@ -39,10 +39,10 @@ struct dir_display
 int
 is_file(char *path);
 
-void
+int
 list_files(struct dir_display *dir_display, char *path);
 
-void
+int
 preview_list_files(struct dir_display *parent_dir, struct dir_display *child_dir, int cursor);
 
 void
