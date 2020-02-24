@@ -40,7 +40,7 @@ selection_cut(struct dir_display *dir_display)
 int
 selection_del(struct dir_display *dir_display)
 {
-	char phrase_final[38] = "Procced with deletion of files? (y/n)";
+	char phrase_final[] = "Proceed with deletion of files? (y/n)";
 	move(config.size.y - 1, 0); // move to begining of line
 	clrtoeol();	  // Clean displayed path
 
@@ -54,12 +54,7 @@ selection_del(struct dir_display *dir_display)
 
 	selection_copy(dir_display);
 	for(size_t i = 0; i < file_selection.size; ++i)
-	{
-		if(fork() == 0)
-			execlp("rm", "rm", "-rf",
-			       file_selection.files[i],
-			       (char *)NULL);
-	}
+	    remove(file_selection.files[i]);
 
 	return 0;
 }
