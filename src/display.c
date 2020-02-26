@@ -11,8 +11,8 @@ screen_setup(void)
 	initscr();
 	cbreak();
 	noecho();
+	curs_set(0);
 	start_color();
-
 	// Colors
 	init_pair(1, COLOR_RED, COLOR_BLACK);
 	init_pair(2, COLOR_CYAN, COLOR_BLACK);
@@ -22,43 +22,7 @@ screen_setup(void)
 }
 
 void
-display_path(void)
-{
-	attron(A_UNDERLINE);
-	mvwprintw(stdscr, config.size.y-1, 0, config.path);
-	attroff(A_UNDERLINE);
-	refresh();
-}
-
-void
-display_files(struct dir_display dir_display, int factor)
-{
-	wclear(dir_display.screen);
-	for(int i = factor; i < dir_display.files.size; i++)
-	{
-		if((i - factor) >= dir_display.position.y[1]) // only draw in the space of the window
-			break;
-
-		if(dir_display.files.marked[i])
-			mvwprintw(dir_display.screen, i - factor,
-				  DISPLAY_MARGIN_STATUS, "*",
-				  dir_display.files.list[i]);
-
-		int file_attr = 0;
-
-		if(!is_file(dir_display.files.list[i]))
-			file_attr = COLOR_PAIR(2);
-
-		wattron(dir_display.screen, file_attr);
-		mvwprintw(dir_display.screen, i - factor, DISPLAY_MARGIN_LIST,
-			  "%s", dir_display.files.list[i]);
-		wattroff(dir_display.screen, file_attr);
-	}
-	wrefresh(dir_display.screen);
-}
-
-void
-main_display_files(struct dir_display dir_display, int cursor)
+display_files(struct dir_display dir_display, int cursor)
 {
 	int factor;
 	static int old_factor;
@@ -81,7 +45,33 @@ main_display_files(struct dir_display dir_display, int cursor)
 
 	old_factor = factor;
 
-	display_files(dir_display, factor);
+	for(int i = factor; i < dir_display.files.size; i++)
+	{
+		if((i - factor) >= dir_display.position.y[1]) // only draw in the space of the window
+			break;
+
+		if(dir_display.files.marked[i])
+			mvwprintw(dir_display.screen, i - factor, 2, "*",
+				  dir_display.files.list[i]);
+		if(i == cursor)
+		{
+			wattron(dir_display.screen, COLOR_PAIR(1) | A_BOLD | A_REVERSE);
+			mvwprintw(dir_display.screen, i - factor, 4, "%s",
+				  dir_display.files.list[i]);
+			wattroff(dir_display.screen, COLOR_PAIR(1) | A_BOLD | A_REVERSE);
+		}
+
+		else if(!is_file(dir_display.files.list[i]))
+		{
+			wattron(dir_display.screen, COLOR_PAIR(2));
+			mvwprintw(dir_display.screen, i - factor, 4, "%s",
+				  dir_display.files.list[i]);
+			wattroff(dir_display.screen, COLOR_PAIR(2));
+		}
+		else
+			mvwprintw(dir_display.screen, i - factor, 4, "%s",
+				  dir_display.files.list[i]);
+	}
 }
 
 void
@@ -92,5 +82,19 @@ preview_display_files(struct dir_display *main_display,
 	if(preview_list_files(main_display, preview_display, cursor) != 0)
 		return;
 
-	display_files(*preview_display, 0);
+	wclear(preview_display->screen);
+	for(int i = 0; i < preview_display->files.size; i++)
+	{
+		if(!is_file(preview_display->files.list[i]))
+		{
+			wattron(preview_display->screen, COLOR_PAIR(2));
+			mvwprintw(preview_display->screen, i, 0, "%s",
+				  preview_display->files.list[i]);
+			wattroff(preview_display->screen, COLOR_PAIR(2));
+		}
+		else
+			mvwprintw(preview_display->screen, i, 0, "%s",
+				  preview_display->files.list[i]);
+	}
+	wrefresh(preview_display->screen);
 }
