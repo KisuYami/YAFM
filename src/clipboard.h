@@ -18,13 +18,13 @@ struct selection {
 } file_selection;
 
 void
-selection_yank(struct dir_display *dir_display);
+selection_yank(display_t *dir_display);
 
 void
-selection_cut(struct dir_display *dir_display);
+selection_cut(display_t *dir_display);
 
 int
-selection_del(struct dir_display *dir_display);
+selection_del(display_t *dir_display);
 
 void
 selection_paste(void);

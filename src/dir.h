@@ -36,15 +36,18 @@ struct dir_display
 	} position;
 };
 
+typedef struct dir_display display_t;
+
+// Shall check if the path points to an accessible file
 int
 is_file(char *path);
 
 int
-list_files(struct dir_display *dir_display, char *path);
+list_files(display_t *dir_display, char *path);
 
 int
-preview_list_files(struct dir_display *parent_dir, struct dir_display *child_dir, int cursor);
+preview_list_files(display_t *parent_dir, display_t *child_dir, int cursor);
 
 void
-file_open(struct dir_display *dir, int cursor);
+file_open(display_t *dir, int cursor);
 #endif /* DIR_H */
