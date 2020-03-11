@@ -7,6 +7,11 @@
 #include "clipboard.h"
 #include "../config.h"
 
+/* MATH
+   config.size.x / 2 is used to get half of
+the screen size
+ */
+
 int
 main(void)
 {
@@ -16,33 +21,9 @@ main(void)
 	config.envp[1] = getenv("VIDEO");
 	config.envp[2] = getenv("DOCUMENTS");
 
-	display_t main_display = {
-		.screen = newwin(config.size.y - 1,
-				 config.size.x / 2,
-				 0, 0),
+	display_t main_display, preview_display;
 
-		.position = (struct position) {
-			.y[0] = 0,
-			.y[1] = config.size.y - 1,
-			.x[0] = 0,
-			.x[1] = config.size.x/2,
-		},
-	};
-
-	display_t preview_display = {
-		.screen = newwin(config.size.y - 1,
-				 config.size.x / 2,
-				 0,
-				 config.size.x / 2),
-
-		.position = (struct position) {
-			.y[0] = 0,
-			.y[1] = config.size.y - 1,
-			.x[0] = config.size.x/2,
-			.x[1] = config.size.x/2,
-		},
-	};
-
+	init_displays(&main_display, &preview_display);
 	list_files(&main_display, NULL);
 
 	DRAW_PATH();
@@ -53,7 +34,7 @@ main(void)
 	int cursor = 0;
 	int main_redraw = 0;
 
-	move(cursor, 4);
+	move(cursor, DISPLAY_M_LIST);
 
 	for(char key = getch(); key != KEY_QUIT; key = getch())
 	{
@@ -145,46 +126,25 @@ main(void)
 			break;
 		}
 
+		preview_display_files(&main_display, &preview_display, cursor);
+
 		// If terminal size has changed, update the window size
-		if(is_term_resized(config.size.y, config.size.x) == true)
+		if(is_term_resized(config.size.y, config.size.x) == 1)
 		{
 			getmaxyx(stdscr, config.size.y, config.size.x);
 
-			main_display = (display_t) {
-				.screen = newwin(config.size.y - 1,
-						 config.size.x / 2,
-						 0, 0),
+			delwin(main_display.screen);
+			delwin(preview_display.screen);
 
-				.position = (struct position) {
-					.y[0] = 0,
-					.y[1] = config.size.y - 1,
-					.x[0] = 0,
-					.x[1] = config.size.x/2,
-				},
-			};
-
-			preview_display = (display_t) {
-				.screen = newwin(config.size.y - 1,
-						 config.size.x / 2,
-						 0,
-						 config.size.x / 2),
-
-				.position = (struct position) {
-					.y[0] = 0,
-					.y[1] = config.size.y - 1,
-					.x[0] = config.size.x/2,
-					.x[1] = config.size.x/2,
-				},
-			};
+			init_displays(&main_display, &preview_display);
 
 			DRAW_PATH();
+			main_display_files(main_display, cursor);
 		}
 
-		preview_display_files(&main_display, &preview_display, cursor);
+		move(cursor, DISPLAY_M_LIST);
 
-		move(cursor, 4);
-
-		if(cursor > config.size.y - 3 || main_redraw == 1)
+		if(cursor >= config.size.y - DISPLAY_M_CURS || main_redraw == 1)
 		{
 			main_display_files(main_display, cursor);
 			main_redraw = 1;

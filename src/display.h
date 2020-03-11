@@ -10,8 +10,18 @@
 	attroff(A_UNDERLINE);					\
 	refresh();						\
 
+enum DISPLAY_MARGIN {
+	DISPLAY_M_PATH = 1,
+	DISPLAY_M_CURS = 2,
+	DISPLAY_M_MARK = 2,
+	DISPLAY_M_LIST = 4,
+};
+
 void
 screen_setup(void);
+
+void
+init_displays(display_t *main_display, display_t *preview_display);
 
 void
 display_files(display_t dir_display, int factor);

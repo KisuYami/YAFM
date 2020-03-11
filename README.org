@@ -21,3 +21,8 @@ sudo make install
 | =d=     | cut                  |
 | =D=     | delete               |
 |---------+----------------------|
+
+* Donations
+If you want to buy me a cup of coffee
+
+[[https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=N5WTQZKNY8ABY&source=url][PayPal]]
