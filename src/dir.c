@@ -25,7 +25,7 @@ is_file(char *path)
 }
 
 int
-list_files(struct dir_display *dir_display, char *path)
+list_files(display_t *dir_display, char *path)
 {
 	memset(dir_display->files.marked, 0, sizeof(int) * 100); // XXX
 	dir_display->files.size = 0;
@@ -94,8 +94,8 @@ list_files(struct dir_display *dir_display, char *path)
 }
 
 int
-preview_list_files(struct dir_display *parent_dir,
-		   struct dir_display *child_dir, int cursor)
+preview_list_files(display_t *parent_dir,
+		   display_t *child_dir, int cursor)
 {
 	char tmp[1024];
 	strcpy(tmp, config.path);
@@ -120,7 +120,7 @@ file_extension(const char *filename)
 }
 
 void
-file_open(struct dir_display *dir, int cursor)
+file_open(display_t *dir, int cursor)
 {
 	// Get the extension
 	const char *extension = file_extension(dir->files.list[cursor]);

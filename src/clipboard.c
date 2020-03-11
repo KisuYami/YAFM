@@ -6,7 +6,7 @@
 #include "clipboard.h"
 
 static void
-selection_copy(struct dir_display *dir_display)
+selection_copy(display_t *dir_display)
 {
 	file_selection.size = 0;
 
@@ -24,21 +24,21 @@ selection_copy(struct dir_display *dir_display)
 }
 
 void
-selection_yank(struct dir_display *dir_display)
+selection_yank(display_t *dir_display)
 {
 	selection_copy(dir_display);
 	file_selection.type = SEC_CLIP_YANK;
 }
 
 void
-selection_cut(struct dir_display *dir_display)
+selection_cut(display_t *dir_display)
 {
 	selection_copy(dir_display);
 	file_selection.type = SEC_CLIP_YANK;
 }
 
 int
-selection_del(struct dir_display *dir_display)
+selection_del(display_t *dir_display)
 {
 	char phrase_final[] = "Proceed with deletion of files? (y/n)";
 	move(config.size.y - 1, 0); // move to begining of line

@@ -1,8 +1,8 @@
 # Maintainer: Reberti Carvalho Soares <6reberti6@gmail.com>
 pkgname=kyfm
-pkgver=1.0
-pkgrel=1
-epoch=1
+pkgver=git
+pkgrel=0
+epoch=0
 pkgdesc="The fastest file manager."
 arch=('i686' 'x86_64')
 url='www.github.com/KisuYami/kyfm'
