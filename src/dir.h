@@ -25,7 +25,7 @@ struct dir_display
 	{
 		size_t size;
 
-		int  marked[100];
+		short int marked[100];
 		char list[100][1024]; // XXX
 	} files;
 
