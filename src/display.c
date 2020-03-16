@@ -48,6 +48,13 @@ init_displays(display_t *main_display, display_t *preview_display)
 			.x[1] = config.size.x / 2,
 		},
 	};
+
+	list_files(main_display, NULL);
+
+	DRAW_PATH();
+
+	preview_display_files(main_display, &preview_display, 0);
+	main_display_files(*main_display, 0);
 }
 
 void

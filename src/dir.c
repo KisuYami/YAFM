@@ -98,12 +98,10 @@ preview_list_files(display_t *parent_dir,
 		   display_t *child_dir, int cursor)
 {
 	char tmp[1024];
+
 	strcpy(tmp, config.path);
 	strcat(tmp, "/");
 	strcat(tmp, parent_dir->files.list[cursor]);
-
-	wclear(child_dir->screen);
-	wrefresh(child_dir->screen);
 
 	return list_files(child_dir, tmp);
 }

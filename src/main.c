@@ -9,8 +9,8 @@
 
 /* MATH
    config.size.x / 2 is used to get half of
-the screen size
- */
+   the screen size
+*/
 
 int
 main(void)
@@ -24,12 +24,6 @@ main(void)
 	display_t main_display, preview_display;
 
 	init_displays(&main_display, &preview_display);
-	list_files(&main_display, NULL);
-
-	DRAW_PATH();
-
-	preview_display_files(&main_display, &preview_display, 0);
-	main_display_files(main_display, 0);
 
 	int cursor = 0;
 	int main_redraw = 0;
@@ -41,14 +35,16 @@ main(void)
 		switch(key)
 		{
 		case KEY_MOV_UP:
-			if(cursor > 0) cursor--;
+			if(cursor > 0)
+				cursor--;
 
 			break;
 
 		case KEY_MOV_DOWN:
 			// cursor+1: because i need the info about where
 			// the cursor will be, not where it is.
-			if(cursor+1 < main_display.files.size) cursor++;
+			if(cursor+1 < main_display.files.size)
+				cursor++;
 
 			break;
 
@@ -56,20 +52,20 @@ main(void)
 		{
 			char *tmp = strrchr(config.path, '/');
 
-			if(tmp != NULL)
+			if(tmp[1] != config.path[1])
 			{
 				tmp[0] = '\0';
-
-				if(chdir(config.path) != 0) // XXX, so we can cd '/'
-					chdir("/");
-
-				cursor = 0;
-
-				list_files(&main_display, NULL);
-
-				DRAW_PATH();
-				main_display_files(main_display, cursor);
+				chdir(config.path);
 			}
+			else
+				chdir("/");
+
+			cursor = 0;
+
+			list_files(&main_display, NULL);
+
+			DRAW_PATH();
+			main_display_files(main_display, cursor);
 			break;
 		}
 		case KEY_MOV_RIGHT:
@@ -99,15 +95,19 @@ main(void)
 			break;
 
 		case KEY_FILE_HIDDEN:
+			cursor = 0;
 			config.hidden = !config.hidden;
+
 			list_files(&main_display, NULL);
+			main_display_files(main_display, cursor);
 			break;
 
 		case KEY_FILE_DEL:
 			if(selection_del(&main_display) == 0)
 			{
-				list_files(&main_display, NULL);
 				cursor = 0;
+				list_files(&main_display, NULL);
+				main_display_files(main_display, cursor);
 			}
 
 			DRAW_PATH();
@@ -137,9 +137,6 @@ main(void)
 			delwin(preview_display.screen);
 
 			init_displays(&main_display, &preview_display);
-
-			DRAW_PATH();
-			main_display_files(main_display, cursor);
 		}
 
 		move(cursor, DISPLAY_M_LIST);
