@@ -1,9 +1,10 @@
-#ifndef CLIPBOARD_H
-#define CLIPBOARD_H
+#ifndef INTERACTION_H
+#define INTERACTION_H
 
 #include <stddef.h>
 
 #include "dir.h"
+#include "./display.h"
 
 enum selection_type {
 	SEC_CLIP_YANK = 1,
@@ -18,6 +19,9 @@ struct selection {
 } file_selection;
 
 void
+handle_input(display_t *main_display, int *cursor, char key);
+
+void
 selection_yank(display_t *dir_display);
 
 void
@@ -29,4 +33,5 @@ selection_del(display_t *dir_display);
 void
 selection_paste(void);
 
-#endif /* CLIPBOARD_H */
+
+#endif /* INTERACTION_H */

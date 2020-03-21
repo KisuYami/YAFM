@@ -24,9 +24,6 @@ void
 init_displays(display_t *main_display, display_t *preview_display);
 
 void
-display_files(display_t dir_display, int factor);
-
-void
 main_display_files(display_t dir_display, int cursor);
 
 void

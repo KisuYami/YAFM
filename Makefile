@@ -1,6 +1,6 @@
 TARGET_EXEC = kyfm
 
-CC 		= gcc
+CC 	= gcc
 CLIBS 	= -lncurses
 CFLAGS 	= -O3
 DEBUG_CFLAGS = -Wall -Werror -pedantic -ggdb3 -Wno-error=unknown-pragmas
@@ -26,9 +26,6 @@ endif
 install: $(BUILD_DIR)/$(TARGET_EXEC)
 	install -Dm664 $(BUILD_DIR)/$(TARGET_EXEC) ${DESTDIR}/usr/bin/
 	chmod +x $(DESTDIR)/usr/bin/$(TARGET_EXEC)
-
-pkg:
-	makepkg
 
 clean:
 	$(RM) -r $(BUILD_DIR)

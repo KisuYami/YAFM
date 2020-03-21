@@ -27,7 +27,7 @@ is_file(char *path)
 int
 list_files(display_t *dir_display, char *path)
 {
-	memset(dir_display->files.marked, 0, sizeof(int) * 100); // XXX
+	memset(dir_display->files.marked, 0, sizeof(int) * FILE_LIST_SZ); // XXX
 	dir_display->files.size = 0;
 
 	DIR *d = NULL;
@@ -36,8 +36,6 @@ list_files(display_t *dir_display, char *path)
 	{
 		getcwd(config.path, PATH_MAX);
 		d = opendir(config.path);
-
-		if(!d) return -1;
 	}
 
 	else
@@ -46,32 +44,22 @@ list_files(display_t *dir_display, char *path)
 			return -1;
 
 		d = opendir(path);
+	}
 
-		if(!d) return -1;
+	if(!d)
+	{
+		perror(NULL);
+		return -1;
 	}
 
 	size_t i = 0;
+	char **tmp_list = calloc(FILE_LIST_SZ, sizeof(char **));
 
-	size_t count_list = 100;
-	char **tmp_list = calloc(count_list, sizeof(char **));
-
-	for(struct dirent *dir = readdir(d);
-	    dir != NULL && i < 100;
-	    dir = readdir(d))
+	for(struct dirent *dir = readdir(d); dir != NULL; dir = readdir(d))
 	{
-		if(i >= count_list)
-		{
-			count_list += 100;
-			char **tmp = realloc(tmp_list,
-					   count_list * sizeof(char **));
-			if(tmp)
-				tmp_list = tmp;
-			else
-			{
-				free(tmp_list);
-				return -1;
-			}
-		}
+		if(i >= FILE_LIST_SZ)
+			break;
+
 		// Don't Show hidden files
 		if(config.hidden || *dir->d_name != '.')
 			tmp_list[i++] = dir->d_name;
@@ -103,6 +91,8 @@ preview_list_files(display_t *parent_dir,
 	strcat(tmp, "/");
 	strcat(tmp, parent_dir->files.list[cursor]);
 
+	strcpy(child_dir->files.dir, parent_dir->files.list[cursor]);
+
 	return list_files(child_dir, tmp);
 }
 
@@ -112,7 +102,7 @@ file_extension(const char *filename)
 	const char *dot = strrchr(filename, '.');
 
 	if(!dot || dot == filename)
-		return "";
+		return ""; // XXX
 
 	return dot + 1;
 }
