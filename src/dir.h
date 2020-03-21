@@ -2,7 +2,11 @@
 #define DIR_H
 
 #include <ncurses.h>
+#include <dirent.h>
 #include <stddef.h>
+
+#define FILE_LIST_SZ 100
+
 
 struct config
 {
@@ -25,8 +29,9 @@ struct dir_display
 	{
 		size_t size;
 
-		short int marked[100];
-		char list[100][1024]; // XXX
+		short int marked[FILE_LIST_SZ];
+		char list[FILE_LIST_SZ][MAXNAMLEN]; // TODO: Make it resizeble
+		char dir[MAXNAMLEN];
 	} files;
 
 	struct position
