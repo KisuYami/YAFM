@@ -97,7 +97,7 @@ display_files(display_t dir_display, int factor)
 
 		int display_attr = 0;
 
-		char buf[1024];
+		char buf[1536];
 		sprintf(buf, "%s/%s/%s", config.path,
 			dir_display.files.dir,
 			dir_display.files.list[i]);
