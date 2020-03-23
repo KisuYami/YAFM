@@ -2,3 +2,5 @@
 /build
 /PKG
 **/TAGS
+*.swp
+tags
