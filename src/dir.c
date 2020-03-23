@@ -27,9 +27,6 @@ is_file(char *path)
 int
 list_files(display_t *dir_display, char *path)
 {
-	memset(dir_display->files.marked, 0, sizeof(int) * FILE_LIST_SZ); // XXX
-	dir_display->files.size = 0;
-
 	DIR *d = NULL;
 
 	if(path == NULL)
@@ -52,28 +49,22 @@ list_files(display_t *dir_display, char *path)
 		return -1;
 	}
 
-	size_t i = 0;
 	char **tmp_list = calloc(FILE_LIST_SZ, sizeof(char **));
+
+	memset(dir_display->files.marked, 0, sizeof(int) * FILE_LIST_SZ);
+	dir_display->files.size = 0;
 
 	for(struct dirent *dir = readdir(d); dir != NULL; dir = readdir(d))
 	{
-		if(i >= FILE_LIST_SZ)
-			break;
-
 		// Don't Show hidden files
 		if(config.hidden || *dir->d_name != '.')
-			tmp_list[i++] = dir->d_name;
+			tmp_list[dir_display->files.size++] = dir->d_name;
 	}
 
-	qsort(&tmp_list[0], i, sizeof(char *), compare);
+	qsort(&tmp_list[0], dir_display->files.size, sizeof(char *), compare);
 
-	for(dir_display->files.size = 0;
-	    dir_display->files.size < i;
-	    ++dir_display->files.size)
-	{
-		strcpy(dir_display->files.list[dir_display->files.size],
-		       tmp_list[dir_display->files.size]);
-	}
+	for(size_t i = 0; i < dir_display->files.size; ++i)
+		strcpy(dir_display->files.list[i], tmp_list[i]);
 
 	free(tmp_list);
 	closedir(d);
