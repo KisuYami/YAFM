@@ -1,5 +1,7 @@
 * Yet Another File Manager
-Like ranger, but worse, and in C.
+A suckless filemanager.
+
+[[file:./preview.png]]
 
 ** Install
 #+BEGIN_SRC sh
