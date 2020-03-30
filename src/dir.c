@@ -56,6 +56,9 @@ list_files(display_t *dir_display, char *path)
 
 	for(struct dirent *dir = readdir(d); dir != NULL; dir = readdir(d))
 	{
+		if(dir_display->files.size > FILE_LIST_SZ)
+			break;
+
 		// Don't Show hidden files
 		if(config.hidden || *dir->d_name != '.')
 			tmp_list[dir_display->files.size++] = dir->d_name;

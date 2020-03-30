@@ -11,7 +11,7 @@
 struct config
 {
 	short int hidden; // 1 = show hidden files
-	char *envp[3];
+	char *envp[5];
 	char path[1024];
 
 	struct size

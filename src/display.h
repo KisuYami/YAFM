@@ -3,12 +3,10 @@
 
 #include "dir.h"
 
-#define DRAW_PATH(void)						\
-	clear();						\
-	attron(A_UNDERLINE);					\
-	mvwprintw(stdscr, config.size.y-1, 0, config.path);	\
-	attroff(A_UNDERLINE);					\
-	refresh();						\
+// XXX
+#define DRAW_FMA(cursor, ammount)					\
+	mvwprintw(stdscr, config.size.y-1, config.size.x-6,		\
+                  "%d/%d", cursor+1, ammount);				\
 
 enum DISPLAY_MARGIN {
 	DISPLAY_M_PATH = 1,
@@ -30,4 +28,7 @@ void
 preview_display_files(display_t *main_display,
 		      display_t *preview_display,
 		      int cursor);
+
+void
+draw_path(void);
 #endif /* DISPLAY_H */
