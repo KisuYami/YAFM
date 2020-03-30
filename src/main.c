@@ -42,6 +42,7 @@ main(void)
 			init_displays(&main_display, &preview_display);
 		}
 
+		DRAW_FMA(cursor, main_display.files.size);
 		move(cursor, DISPLAY_M_LIST);
 
 		/**************************************************************/
@@ -57,6 +58,7 @@ main(void)
 			if(cursor == 0)
 				main_redraw = 0;
 		}
+
 	}
 
 	endwin();

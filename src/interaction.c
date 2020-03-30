@@ -42,7 +42,7 @@ handle_input(display_t *main_display, int *cursor, char key)
 
 		*cursor = 0;
 
-		DRAW_PATH();
+		draw_path();
 		main_display_files(*main_display, *cursor);
 
 		break;
@@ -54,7 +54,7 @@ handle_input(display_t *main_display, int *cursor, char key)
 
 			*cursor = 0;
 
-			DRAW_PATH();
+			draw_path();
 			main_display_files(*main_display, *cursor);
 		}
 
@@ -68,7 +68,7 @@ handle_input(display_t *main_display, int *cursor, char key)
 		main_display->files.marked[*cursor] =
 			!main_display->files.marked[*cursor];
 
-		DRAW_PATH();
+		draw_path();
 		main_display_files(*main_display, *cursor);
 		refresh();
 		break;
@@ -89,7 +89,7 @@ handle_input(display_t *main_display, int *cursor, char key)
 			main_display_files(*main_display, *cursor);
 		}
 
-		DRAW_PATH();
+		draw_path();
 		break;
 
 	case KEY_FILE_YANK:

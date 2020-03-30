@@ -1,4 +1,5 @@
 #include <ncurses.h>
+#include <unistd.h>
 #include <stdarg.h>
 #include <stdlib.h>
 #include <string.h>
@@ -72,7 +73,8 @@ init_displays(display_t * main_display, display_t * preview_display)
 		exit(-1);
 	}
 
-	DRAW_PATH();
+	draw_path();
+	DRAW_FMA(0, main_display->files.size);
 
 	preview_display_files(main_display, preview_display, 0);
 	main_display_files(*main_display, 0);
@@ -118,8 +120,8 @@ display_files(display_t dir_display, int factor)
 void
 main_display_files(display_t dir_display, int cursor)
 {
-	int		factor;
-	static int	old_factor;
+	int	   factor;
+	static int old_factor;
 
 	/*********************************************************************/
 	/* Ifthe curser has a greater value than the size of the screen */
@@ -163,4 +165,35 @@ preview_display_files(display_t * main_display,
 		return;
 
 	display_files(*preview_display, 0);
+}
+
+void
+draw_path(void)
+{
+
+	char   path[1024];
+	char  *home = getenv("HOME");
+	size_t size = strlen(home);
+
+	if(strncmp(config.path, home, size) == 0)
+	{
+		strcpy(path, "~");
+		strcat(path, config.path+size);
+	}
+	else
+		strcpy(path, config.path);
+
+	char *user_name = getenv("USER");
+	char  host_name[1024];
+
+	gethostname(host_name, 1024);
+
+	clear();
+	attron(A_UNDERLINE);
+
+	mvwprintw(stdscr, config.size.y-1, 0, "%s@%s: %s",
+		  user_name, host_name, path);
+
+	attroff(A_UNDERLINE);
+	refresh();
 }
