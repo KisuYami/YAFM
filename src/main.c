@@ -61,6 +61,24 @@ main(void)
 
 	}
 
+	if(main_display.files.size > 0)
+	{
+		for(size_t i = 0; i < main_display.files.size; ++i)
+			free(main_display.files.list[i]);
+
+		free(main_display.files.list);
+		free(main_display.files.marked);
+	}
+
+	if(preview_display.files.size > 0)
+	{
+		for(size_t i = 0; i < preview_display.files.size; ++i)
+			free(preview_display.files.list[i]);
+
+		free(preview_display.files.list);
+		free(preview_display.files.marked);
+	}
+
 	endwin();
 	delwin(main_display.screen);
 	delwin(preview_display.screen);

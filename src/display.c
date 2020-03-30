@@ -162,7 +162,13 @@ preview_display_files(display_t * main_display,
 		      display_t * preview_display, int cursor)
 {
 	if(preview_list_files(main_display, preview_display, cursor) != 0)
+	{
+		wclear(preview_display->screen);
+		wrefresh(preview_display->screen);
+
 		return;
+	}
+
 
 	display_files(*preview_display, 0);
 }

@@ -15,7 +15,7 @@ enum selection_type {
 struct selection {
 	int type;
 	size_t size;
-	char files[100][1024]; // XXX
+	char files[100][MAXNAMLEN];
 } file_selection;
 
 void
