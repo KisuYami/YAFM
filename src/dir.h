@@ -29,8 +29,8 @@ struct dir_display
 	{
 		size_t size;
 
-		short int marked[FILE_LIST_SZ];
-		char list[FILE_LIST_SZ][MAXNAMLEN]; // TODO: Make it resizeble
+		short int *marked;
+		char **list; // TODO: Make it resizeble
 		char dir[MAXNAMLEN];
 	} files;
 
