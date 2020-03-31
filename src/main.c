@@ -63,7 +63,7 @@ main(void)
 
 	if(main_display.files.size > 0)
 	{
-		for(size_t i = 0; i < main_display.files.size; ++i)
+		for(size_t i = 0; i < main_display.files.mem_alloc; ++i)
 			free(main_display.files.list[i]);
 
 		free(main_display.files.list);
@@ -72,7 +72,7 @@ main(void)
 
 	if(preview_display.files.size > 0)
 	{
-		for(size_t i = 0; i < preview_display.files.size; ++i)
+		for(size_t i = 0; i < preview_display.files.mem_alloc; ++i)
 			free(preview_display.files.list[i]);
 
 		free(preview_display.files.list);

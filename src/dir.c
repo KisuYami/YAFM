@@ -49,57 +49,36 @@ list_files(display_t *dir_display, char *path)
 		return -1;
 	}
 
-	if(dir_display->files.size > 0)
+	if(dir_display->files.size == 0)
 	{
-		for (size_t i = 0; i < dir_display->files.size; ++i)
-			free(dir_display->files.list[i]);
-
-		free(dir_display->files.list);
-		free(dir_display->files.marked);
-	}
-
-
-	dir_display->files.list = calloc(FILE_LIST_SZ, sizeof(char **));
-	if(!dir_display->files.list)
-	{
-		perror("kyfm: Failed to allocate memory for file list");
-		dir_display->files.size = 0;
-		return -1;
+		dir_display->files.list = calloc(FILE_LIST_SZ, sizeof(char **));
+		dir_display->files.mem_count = FILE_LIST_SZ;
 	}
 
 	dir_display->files.size = 0;
 
-	size_t count = FILE_LIST_SZ;
-
 	for(struct dirent *dir = readdir(d); dir != NULL; dir = readdir(d))
 	{
-		if(dir_display->files.size >= count)
+		if(dir_display->files.size >= dir_display->files.mem_count)
 		{
-			count += FILE_LIST_SZ;
+			dir_display->files.mem_count += FILE_LIST_SZ;
+
 			char **tmp = realloc(dir_display->files.list,
-					     count*sizeof(char **));
-
-			if(!tmp)
-			{
-				perror("kyfm: Failed to reallocate memory"
-				       " for file list");
-
-				for(size_t i = 0; i < dir_display->files.size; ++i)
-					free(dir_display->files.list[i]);
-
-				free(dir_display->files.list);
-				dir_display->files.size = 0;
-
-				return -1;
-			}
+					     dir_display->files.mem_count *
+					     sizeof(char **));
 
 			dir_display->files.list = tmp;
 		}
 		// Don't Show hidden files
 		if(config.hidden || *dir->d_name != '.')
 		{
-			dir_display->files.list[dir_display->files.size] =
-				malloc(MAXNAMLEN);
+			if(dir_display->files.size >= dir_display->files.mem_alloc)
+			{
+				dir_display->files.list[dir_display->files.size] =
+					malloc(MAXNAMLEN);
+
+				dir_display->files.mem_alloc++;
+			}
 
 			strcpy(dir_display->files.list[dir_display->files.size],
 			       dir->d_name);
@@ -111,35 +90,14 @@ list_files(display_t *dir_display, char *path)
 	closedir(d);
 
 	if(dir_display->files.size == 0)
-	{
-		free(dir_display->files.list);
 		return -1;
-	}
-
-	char **tmp = realloc(dir_display->files.list,
-			     dir_display->files.size*sizeof(char **));
-
-	if(!tmp)
-	{
-		perror("kyfm: Failed to reallocate memory"
-		       " for file list");
-
-		for(size_t i = 0; i < dir_display->files.size; ++i)
-			free(dir_display->files.list[i]);
-
-		free(dir_display->files.list);
-		dir_display->files.size = 0;
-
-		return -1;
-	}
-
-	dir_display->files.list = tmp;
 
 	qsort(&dir_display->files.list[0], dir_display->files.size,
 	      sizeof(char *), compare);
 
-	dir_display->files.marked = calloc(dir_display->files.size,
-					   sizeof(int));
+	dir_display->files.marked = realloc(dir_display->files.marked,
+					    dir_display->files.size * sizeof(int));
+	memset(dir_display->files.marked, 0, dir_display->files.size*sizeof(int));
 
 	return 0;
 }
