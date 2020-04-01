@@ -24,8 +24,13 @@ else
 endif
 
 install: $(BUILD_DIR)/$(TARGET_EXEC)
-	install -Dm664 $(BUILD_DIR)/$(TARGET_EXEC) ${DESTDIR}/usr/bin/
-	chmod +x $(DESTDIR)/usr/bin/$(TARGET_EXEC)
+ifdef DESTDIR
+	install -Dm664 $(BUILD_DIR)/$(TARGET_EXEC) ${DESTDIR}$(TARGET_EXEC)
+	chmod +x $(DESTDIR)$(TARGET_EXEC)
+else
+	install -Dm664 $(BUILD_DIR)/$(TARGET_EXEC) /usr/bin
+	chmod +x /usr/bin/$(TARGET_EXEC)
+endif
 
 clean:
 	$(RM) -r $(BUILD_DIR)

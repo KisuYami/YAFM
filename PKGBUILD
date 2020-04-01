@@ -22,7 +22,7 @@ package() {
   cd "$pkgname/"
 
   mkdir -p "$pkgdir"/usr/bin/
-  make DESTDIR="$pkgdir" install
+  make DESTDIR="$pkgdir"/usr/bin/ install
 }
 
 # vim:set ts=2 sw=2 et:

@@ -89,8 +89,22 @@ list_files(display_t *dir_display, char *path)
 
 	closedir(d);
 
+	// THIS IS AN HOTFIX
 	if(dir_display->files.size == 0)
+	{
+		for(size_t i = 0; i < dir_display->files.mem_alloc; i++) 
+			free(dir_display->files.list[i]);
+
+		// If some memorie was acctualy alloc'd then marked was allocated
+		if(dir_display->files.mem_alloc > 0)
+			free(dir_display->files.marked);
+
+		free(dir_display->files.list);
+		dir_display->files.mem_alloc = 0;
+		dir_display->files.mem_count = 0;
+
 		return -1;
+	}
 
 	qsort(&dir_display->files.list[0], dir_display->files.size,
 	      sizeof(char *), compare);
