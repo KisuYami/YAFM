@@ -61,7 +61,7 @@ main(void)
 
 	}
 
-	if(main_display.files.size > 0)
+	if(main_display.files.mem_count > 0)
 	{
 		for(size_t i = 0; i < main_display.files.mem_alloc; ++i)
 			free(main_display.files.list[i]);
@@ -70,7 +70,7 @@ main(void)
 		free(main_display.files.marked);
 	}
 
-	if(preview_display.files.size > 0)
+	if(preview_display.files.mem_count > 0)
 	{
 		for(size_t i = 0; i < preview_display.files.mem_alloc; ++i)
 			free(preview_display.files.list[i]);

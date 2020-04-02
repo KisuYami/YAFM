@@ -29,27 +29,15 @@ list_files(display_t *dir_display, char *path)
 {
 	DIR *d = NULL;
 
-	if(path == NULL)
-	{
+	if(!path)
 		getcwd(config.path, PATH_MAX);
-		d = opendir(config.path);
-	}
-
-	else
-	{
-		if(!is_file(path))
-			return -1;
-
-		d = opendir(path);
-	}
+		
+	d = opendir((!path) ? config.path : path);
 
 	if(!d)
-	{
-		perror(NULL);
 		return -1;
-	}
 
-	if(dir_display->files.size == 0)
+	if(dir_display->files.mem_count == 0)
 	{
 		dir_display->files.list = calloc(FILE_LIST_SZ, sizeof(char **));
 		dir_display->files.mem_count = FILE_LIST_SZ;
@@ -62,12 +50,9 @@ list_files(display_t *dir_display, char *path)
 		if(dir_display->files.size >= dir_display->files.mem_count)
 		{
 			dir_display->files.mem_count += FILE_LIST_SZ;
-
-			char **tmp = realloc(dir_display->files.list,
-					     dir_display->files.mem_count *
-					     sizeof(char **));
-
-			dir_display->files.list = tmp;
+			dir_display->files.list = realloc(dir_display->files.list,
+							  dir_display->files.mem_count *
+							  sizeof(char **));
 		}
 		// Don't Show hidden files
 		if(config.hidden || *dir->d_name != '.')
@@ -89,19 +74,12 @@ list_files(display_t *dir_display, char *path)
 
 	closedir(d);
 
-	// THIS IS AN HOTFIX
 	if(dir_display->files.size == 0)
 	{
-		for(size_t i = 0; i < dir_display->files.mem_alloc; i++) 
-			free(dir_display->files.list[i]);
-
-		// If some memorie was acctualy alloc'd then marked was allocated
-		if(dir_display->files.mem_alloc > 0)
+		if(dir_display->files.marked)
 			free(dir_display->files.marked);
 
-		free(dir_display->files.list);
-		dir_display->files.mem_alloc = 0;
-		dir_display->files.mem_count = 0;
+		dir_display->files.marked = NULL;
 
 		return -1;
 	}
@@ -109,9 +87,10 @@ list_files(display_t *dir_display, char *path)
 	qsort(&dir_display->files.list[0], dir_display->files.size,
 	      sizeof(char *), compare);
 
-	dir_display->files.marked = realloc(dir_display->files.marked,
-					    dir_display->files.size * sizeof(int));
-	memset(dir_display->files.marked, 0, dir_display->files.size*sizeof(int));
+	if(dir_display->files.marked)
+		free(dir_display->files.marked);
+
+	dir_display->files.marked = calloc(dir_display->files.size, sizeof(short int));
 
 	return 0;
 }
