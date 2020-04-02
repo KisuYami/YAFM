@@ -12,10 +12,12 @@ main(void)
 {
 	screen_setup();
 
-	// Needed to open files with externel programs
+	// Needed to open files with externel programs...
 	config.envp[0] = getenv("IMAGE");
 	config.envp[1] = getenv("VIDEO");
 	config.envp[2] = getenv("DOCUMENTS");
+	config.envp[3] = getenv("HOME");
+	config.envp[4] = getenv("USER");
 
 	display_t main_display, preview_display;
 

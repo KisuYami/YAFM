@@ -179,12 +179,10 @@ preview_display_files(display_t *main_display,
 void
 draw_path(void)
 {
-
 	char   path[1024];
-	char  *home = getenv("HOME");
-	size_t size = strlen(home);
+	size_t size = strlen(config.envp[3]);
 
-	if(strncmp(config.path, home, size) == 0)
+	if(strncmp(config.path, config.envp[3], size) == 0)
 	{
 		strcpy(path, "~");
 		strcat(path, config.path+size);
@@ -192,8 +190,7 @@ draw_path(void)
 	else
 		strcpy(path, config.path);
 
-	char *user_name = getenv("USER");
-	char  host_name[1024];
+	char host_name[1024];
 
 	gethostname(host_name, 1024);
 
@@ -201,7 +198,7 @@ draw_path(void)
 	attron(A_UNDERLINE);
 
 	mvwprintw(stdscr, config.size.y-1, 0, "%s@%s: %s",
-		  user_name, host_name, path);
+		  config.envp[4], host_name, path);
 
 	attroff(A_UNDERLINE);
 	refresh();
