@@ -95,21 +95,6 @@ list_files(display_t *dir_display, char *path)
 	return 0;
 }
 
-int
-preview_list_files(display_t *parent_dir,
-		   display_t *child_dir, int cursor)
-{
-	char tmp[1024];
-
-	strcpy(tmp, config.path);
-	strcat(tmp, "/");
-	strcat(tmp, parent_dir->files.list[cursor]);
-
-	strcpy(child_dir->files.dir, parent_dir->files.list[cursor]);
-
-	return list_files(child_dir, tmp);
-}
-
 static const char *
 file_extension(const char *filename)
 {

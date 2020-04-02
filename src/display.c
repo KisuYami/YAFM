@@ -158,17 +158,20 @@ main_display_files(display_t dir_display, int cursor)
 }
 
 void
-preview_display_files(display_t * main_display,
-		      display_t * preview_display, int cursor)
+preview_display_files(display_t *main_display,
+		      display_t *preview_display, int cursor)
 {
-	if(preview_list_files(main_display, preview_display, cursor) != 0)
+	char tmp[1026];
+
+	sprintf(tmp, "%s/%s", config.path, main_display->files.list[cursor]);
+
+	if(list_files(preview_display, tmp) != 0)
 	{
 		wclear(preview_display->screen);
 		wrefresh(preview_display->screen);
 
 		return;
 	}
-
 
 	display_files(*preview_display, 0);
 }

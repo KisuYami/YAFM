@@ -52,9 +52,6 @@ is_file(char *path);
 int
 list_files(display_t *dir_display, char *path);
 
-int
-preview_list_files(display_t *parent_dir, display_t *child_dir, int cursor);
-
 void
 file_open(display_t *dir, int cursor);
 #endif /* DIR_H */
