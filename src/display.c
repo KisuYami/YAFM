@@ -37,6 +37,9 @@ init_displays(display_t * main_display, display_t * preview_display)
 		},
 	};
 
+	// see display_files()
+	strcpy(main_display->files.dir, "./");
+
 	*preview_display = (display_t) {
 		.screen = newwin(config.size.y - DISPLAY_M_PATH,
 				 config.size.x / 2, 0,
@@ -80,13 +83,15 @@ init_displays(display_t * main_display, display_t * preview_display)
 	main_display_files(*main_display, 0);
 }
 
-// TODO: Fix wrong display coloring that is caused by not having a full
-/// path to the file/dir while checking forit's type.
-
 static void
 display_files(display_t dir_display, int factor)
 {
 	wclear(dir_display.screen);
+
+	/* We change in the dir to get the right values when calling is_file()
+	   the main display dir is aways set to "./" */
+	chdir(dir_display.files.dir);
+
 	for(int i = factor; i < dir_display.files.size; i++)
 	{
 		// only draw in the space of the window
@@ -94,17 +99,11 @@ display_files(display_t dir_display, int factor)
 			break;
 
 		if(dir_display.files.marked[i])
-			mvwprintw(dir_display.screen, i - factor,
-				  DISPLAY_M_MARK, "*", dir_display.files.list[i]);
+			mvwprintw(dir_display.screen, i - factor, DISPLAY_M_MARK, "*");
 
 		int display_attr = 0;
 
-		char buf[1536];
-		sprintf(buf, "%s/%s/%s", config.path,
-			dir_display.files.dir,
-			dir_display.files.list[i]);
-
-		if(!is_file(buf))
+		if(!is_file(dir_display.files.list[i]))
 			display_attr = COLOR_PAIR(1);
 
 		wattron(dir_display.screen, display_attr);
@@ -114,6 +113,8 @@ display_files(display_t dir_display, int factor)
 
 		wattroff(dir_display.screen, display_attr);
 	}
+
+	chdir(config.path);
 	wrefresh(dir_display.screen);
 }
 
@@ -161,9 +162,10 @@ void
 preview_display_files(display_t *main_display,
 		      display_t *preview_display, int cursor)
 {
-	char tmp[1026];
+	char tmp[2048];
 
-	sprintf(tmp, "%s/%s", config.path, main_display->files.list[cursor]);
+	strcpy(preview_display->files.dir, main_display->files.list[cursor]);
+	sprintf(tmp, "%s/%s", config.path, preview_display->files.dir);
 
 	if(list_files(preview_display, tmp) != 0)
 	{
