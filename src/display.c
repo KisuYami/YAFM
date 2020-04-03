@@ -94,7 +94,7 @@ display_files(display_t dir_display, int factor)
 
 	for(int i = factor; i < dir_display.files.size; i++)
 	{
-		// only draw in the space of the window
+		/* only draw in the space of the window */
 		if((i - factor) >= dir_display.position.y[1])
 			break;
 
@@ -133,22 +133,15 @@ main_display_files(display_t dir_display, int cursor)
 	factor = (cursor > (dir_display.position.y[1] - DISPLAY_M_CURS)) ?
 		(cursor - dir_display.position.y[1] + DISPLAY_M_CURS) : 0;
 
-	/*********************************************************************/
 	/* This will reset the algorithm when changing directories.  */
-	/*********************************************************************/
 	if(cursor == 0)
 		old_factor = 0;
 
-	/*********************************************************************/
-	/* Creates the effect of the cursor moving to the top of the */
-	/* window.  */
-	/*********************************************************************/
+	/* Creates the effect of the cursor moving to the top of the window. */
 	if(old_factor > factor && cursor > old_factor)
 		factor = old_factor;
 
-	/*********************************************************************/
 	/* Scroll up only after the cursor hits the top margin.	 */
-	/*********************************************************************/
 	else if(old_factor > factor)
 		factor = old_factor - 1;
 

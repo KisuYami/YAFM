@@ -1,5 +1,6 @@
 #include <string.h>
 #include <unistd.h>
+#include <sys/wait.h>
 
 #include "interaction.h"
 #include "display.h"
@@ -83,13 +84,11 @@ handle_input(display_t *main_display, int *cursor, char key)
 
 	case KEY_FILE_DEL:
 		if(selection_del(main_display) == 0)
-		{
 			*cursor = 0;
-			list_files(main_display, NULL);
-			main_display_files(*main_display, *cursor);
-		}
 
 		draw_path();
+		list_files(main_display, NULL);
+		main_display_files(*main_display, *cursor);
 		break;
 
 	case KEY_FILE_YANK:
@@ -102,6 +101,10 @@ handle_input(display_t *main_display, int *cursor, char key)
 
 	case KEY_FILE_PASTE:
 		selection_paste();
+
+		draw_path();
+		list_files(main_display, NULL);
+		main_display_files(*main_display, *cursor);
 		break;
 	}
 }
@@ -114,13 +117,8 @@ selection_copy(display_t *dir_display)
 	for(size_t i = 0; i < dir_display->files.size; ++i)
 	{
 		if(dir_display->files.marked[i] == 1)
-		{
-			strcpy(file_selection.files[file_selection.size],
-			       config.path);
-			strcat(file_selection.files[file_selection.size], "/");
-			strcat(file_selection.files[file_selection.size++],
-			       dir_display->files.list[i]);
-		}
+			sprintf(file_selection.files[file_selection.size++],
+				"%s/%s", config.path, dir_display->files.list[i]);
 	}
 }
 
@@ -135,13 +133,13 @@ void
 selection_cut(display_t *dir_display)
 {
 	selection_copy(dir_display);
-	file_selection.type = SEC_CLIP_YANK;
+	file_selection.type = SEC_CLIP_CUT;
 }
 
 int
 selection_del(display_t *dir_display)
 {
-	char phrase_final[] = "Proceed with deletion of files? (y/n)";
+	char phrase_final[] = "Proceed with deletion of files? (y/N)";
 	move(config.size.y - 1, 0); // move to begining of line
 	clrtoeol();	  // Clean displayed path
 
@@ -176,5 +174,6 @@ selection_paste(void)
 				execlp("mv", "mv", file_selection.files[i],
 				       config.path, (char *)NULL);
 		}
+		wait(NULL);
 	}
 }

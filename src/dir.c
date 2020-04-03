@@ -101,7 +101,7 @@ file_extension(const char *filename)
 	const char *dot = strrchr(filename, '.');
 
 	if(!dot || dot == filename)
-		return ""; // XXX
+		return NULL;
 
 	return dot + 1;
 }
@@ -111,6 +111,9 @@ file_open(display_t *dir, int cursor)
 {
 	// Get the extension
 	const char *extension = file_extension(dir->files.list[cursor]);
+
+	if(!extension)
+		return;
 
 	int file_type = -1;
 
