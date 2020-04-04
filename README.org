@@ -3,7 +3,13 @@ KYFM(KysuYami File Manager) is an filemanger meant to be used within terminals a
 made with ncurses. The focus is of this project is to developt an file manager with the suckless
 philosophy in mind, that leads to only implement features that are needed.
 
-[[https://readthedocs.org/projects/kyfm/badge/?version=latest]]
+[[https://github.com/KisuYami/kyfm/releases/tag/v1.3][https://img.shields.io/badge/version-v1.3-green.svg]]
+[[https://github.com/KisuYami/kyfm/issues][https://img.shields.io/github/issues/KisuYami/KYFM.svg]]
+[[https://github.com/KisuYami/kyfm/graphs/commit-activity][https://img.shields.io/github/commit-activity/m/KisuYami/KYFM.svg]]
+[[https://github.com/KisuYami/kyfm/graphs/contributors][https://img.shields.io/github/contributors/KisuYami/KYFM.svg]]
+[[https://github.com/mirror/ncurses][https://img.shields.io/badge/dependencies-ncurses-blue.svg]]
+[[https://www.gnu.org/licenses/old-licenses/gpl-2.0.en.html][https://img.shields.io/badge/License-GPL%20v2-blue.svg]]
+[[https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=N5WTQZKNY8ABY&source=url][https://img.shields.io/badge/PayPal-Coffe!-orange.svg]]
       
 [[file:./preview.png]]
 
