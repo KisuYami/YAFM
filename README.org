@@ -2,6 +2,9 @@
 KYFM(KysuYami File Manager) is an filemanger meant to be used within terminals and has the interface
 made with ncurses. The focus is of this project is to developt an file manager with the suckless
 philosophy in mind, that leads to only implement features that are needed.
+
+[[https://readthedocs.org/projects/kyfm/badge/?version=latest]]
+      
 [[file:./preview.png]]
 
 ** Features
