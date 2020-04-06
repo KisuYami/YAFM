@@ -22,10 +22,7 @@ void
 handle_input(display_t *main_display, int *cursor, char key);
 
 void
-selection_yank(display_t *dir_display);
-
-void
-selection_cut(display_t *dir_display);
+selection_copy(display_t *dir_display);
 
 int
 selection_del(display_t *dir_display);

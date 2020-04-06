@@ -38,7 +38,6 @@ handle_input(display_t *main_display, int *cursor, char key)
 		else
 			chdir("/");
 
-
 		list_files(main_display, NULL);
 
 		*cursor = 0;
@@ -92,11 +91,13 @@ handle_input(display_t *main_display, int *cursor, char key)
 		break;
 
 	case KEY_FILE_YANK:
-		selection_yank(main_display);
+		selection_copy(main_display);
+		file_selection.type = SEC_CLIP_YANK;
 		break;
 
 	case KEY_FILE_CUT:
-		selection_cut(main_display);
+		selection_copy(main_display);
+		file_selection.type = SEC_CLIP_CUT;
 		break;
 
 	case KEY_FILE_PASTE:
@@ -109,7 +110,7 @@ handle_input(display_t *main_display, int *cursor, char key)
 	}
 }
 
-static void
+void
 selection_copy(display_t *dir_display)
 {
 	file_selection.size = 0;
@@ -120,20 +121,6 @@ selection_copy(display_t *dir_display)
 			sprintf(file_selection.files[file_selection.size++],
 				"%s/%s", config.path, dir_display->files.list[i]);
 	}
-}
-
-void
-selection_yank(display_t *dir_display)
-{
-	selection_copy(dir_display);
-	file_selection.type = SEC_CLIP_YANK;
-}
-
-void
-selection_cut(display_t *dir_display)
-{
-	selection_copy(dir_display);
-	file_selection.type = SEC_CLIP_CUT;
 }
 
 int
