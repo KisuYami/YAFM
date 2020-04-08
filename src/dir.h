@@ -7,7 +7,6 @@
 
 #define FILE_LIST_SZ 100
 
-
 struct config
 {
 	short int hidden; // 1 = show hidden files

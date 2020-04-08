@@ -152,7 +152,6 @@ selection_paste(void)
 	{
 		if(fork() == 0)
 		{
-
 			if(file_selection.type & SEC_CLIP_YANK)
 				execlp("cp", "cp", "-r",
 				       file_selection.files[i],

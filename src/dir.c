@@ -10,6 +10,21 @@
 
 #include "dir.h"
 
+struct {
+	short int type; // 0 = Image, 1 = Video, 2 = Document
+	char     *str;
+} file_ext_list[] = {
+	{0, "jpg"},
+	{0, "png"},
+	{0, "jpeg"},
+	{1, "mkv"},
+	{1, "mp4"},
+	{1, "avi"},
+	{1, "webm"},
+	{2, "pdf"},
+	{-1, NULL},
+};
+
 static int
 compare(const void *p1, const void *p2)
 {
@@ -117,19 +132,16 @@ file_open(display_t *dir, int cursor)
 
 	int file_type = -1;
 
-	if((strncmp(extension, "jpg", 3) == 0) ||
-	   (strncmp(extension, "png", 3) == 0) ||
-	   (strncmp(extension, "jpeg", 4) == 0))
-		file_type = 0;
+	for(int i = 0; file_ext_list[i].type != -1; ++i)
+	{
+		if(strcmp(extension, file_ext_list[i].str) == 0)
+		{
+			file_type = file_ext_list[i].type;
+			break;
+		}
+	}
 
-	else if((strncmp(extension, "mkv", 3) == 0) ||
-		(strncmp(extension, "mp4", 3) == 0))
-		file_type = 1;
-
-	else if(strncmp(extension, "pdf", 3) == 0)
-		file_type = 2;
-
-	else if(file_type == -1)
+	if(file_type == -1)
 		return; // Non listed file type found
 
 	if(!config.envp[file_type])
