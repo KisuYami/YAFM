@@ -1,16 +1,14 @@
+#include <err.h>
 #include <ncurses.h>
-#include <unistd.h>
 #include <stdarg.h>
 #include <stdlib.h>
 #include <string.h>
-#include <err.h>
+#include <unistd.h>
 
 #include "dir.h"
 #include "display.h"
 
-
-void
-screen_setup(void)
+void screen_setup(void)
 {
 	initscr();
 	cbreak();
@@ -23,38 +21,37 @@ screen_setup(void)
 	getmaxyx(stdscr, config.size.y, config.size.x);
 }
 
-void
-init_displays(display_t * main_display, display_t * preview_display)
+void init_displays(display_t *main_display, display_t *preview_display)
 {
-	*main_display = (display_t) {
-		.screen = newwin(config.size.y - DISPLAY_M_PATH,
-				 config.size.x / 2, 0, 0),
-		.position = (struct position) {
-			.y[0] = 0,
-			.y[1] = config.size.y - DISPLAY_M_PATH,
-			.x[0] = 0,
-			.x[1] = config.size.x / 2,
+	*main_display = (display_t){
+	    .screen =
+		newwin(config.size.y - DISPLAY_M_PATH, config.size.x / 2, 0, 0),
+	    .position =
+		(struct position){
+		    .y[0] = 0,
+		    .y[1] = config.size.y - DISPLAY_M_PATH,
+		    .x[0] = 0,
+		    .x[1] = config.size.x / 2,
 		},
 	};
 
 	// see display_files()
 	strcpy(main_display->files.dir, "./");
 
-	*preview_display = (display_t) {
-		.screen = newwin(config.size.y - DISPLAY_M_PATH,
-				 config.size.x / 2, 0,
-				 config.size.x / 2),
-		.position = (struct position) {
-			.y[0] = 0,
-			.y[1] = config.size.y - DISPLAY_M_PATH,
-			.x[0] = config.size.x / 2,
-			.x[1] = config.size.x / 2,
+	*preview_display = (display_t){
+	    .screen = newwin(config.size.y - DISPLAY_M_PATH, config.size.x / 2,
+			     0, config.size.x / 2),
+	    .position =
+		(struct position){
+		    .y[0] = 0,
+		    .y[1] = config.size.y - DISPLAY_M_PATH,
+		    .x[0] = config.size.x / 2,
+		    .x[1] = config.size.x / 2,
 		},
 	};
 
-	if(!main_display->screen || !preview_display->screen)
-	{
-		if(main_display->screen)
+	if (!main_display->screen || !preview_display->screen) {
+		if (main_display->screen)
 			delwin(main_display->screen);
 
 		endwin();
@@ -64,14 +61,13 @@ init_displays(display_t * main_display, display_t * preview_display)
 		exit(-1);
 	}
 
-	if(list_files(main_display, NULL) == -1)
-	{
+	if (list_files(main_display, NULL) == -1) {
 		delwin(main_display->screen);
 		delwin(preview_display->screen);
 		endwin();
 
 		fprintf(stderr, "kyfm: failed to execute init_displays(),"
-			" exiting with -1 status.\n");
+				" exiting with -1 status.\n");
 
 		exit(-1);
 	}
@@ -83,8 +79,7 @@ init_displays(display_t * main_display, display_t * preview_display)
 	main_display_files(*main_display, 0);
 }
 
-static void
-display_files(display_t dir_display, int factor)
+static void display_files(display_t dir_display, int factor)
 {
 	wclear(dir_display.screen);
 
@@ -92,18 +87,18 @@ display_files(display_t dir_display, int factor)
 	   the main display dir is aways set to "./" */
 	chdir(dir_display.files.dir);
 
-	for(int i = factor; i < dir_display.files.size; i++)
-	{
+	for (int i = factor; i < dir_display.files.size; i++) {
 		/* only draw in the space of the window */
-		if((i - factor) >= dir_display.position.y[1])
+		if ((i - factor) >= dir_display.position.y[1])
 			break;
 
-		if(dir_display.files.marked[i])
-			mvwprintw(dir_display.screen, i - factor, DISPLAY_M_MARK, "*");
+		if (dir_display.files.marked[i])
+			mvwprintw(dir_display.screen, i - factor,
+				  DISPLAY_M_MARK, "*");
 
 		int display_attr = 0;
 
-		if(!is_file(dir_display.files.list[i]))
+		if (!is_file(dir_display.files.list[i]))
 			display_attr = COLOR_PAIR(1);
 
 		wattron(dir_display.screen, display_attr);
@@ -118,10 +113,9 @@ display_files(display_t dir_display, int factor)
 	wrefresh(dir_display.screen);
 }
 
-void
-main_display_files(display_t dir_display, int cursor)
+void main_display_files(display_t dir_display, int cursor)
 {
-	int	   factor;
+	int factor;
 	static int old_factor;
 
 	/*********************************************************************/
@@ -130,19 +124,20 @@ main_display_files(display_t dir_display, int cursor)
 	/* shaw have a value that will make the list files "scrool down" */
 	/* and keep the curser at it's position(DISPLAY_M_CURS).  */
 	/*********************************************************************/
-	factor = (cursor > (dir_display.position.y[1] - DISPLAY_M_CURS)) ?
-		(cursor - dir_display.position.y[1] + DISPLAY_M_CURS) : 0;
+	factor = (cursor > (dir_display.position.y[1] - DISPLAY_M_CURS))
+		     ? (cursor - dir_display.position.y[1] + DISPLAY_M_CURS)
+		     : 0;
 
 	/* This will reset the algorithm when changing directories.  */
-	if(cursor == 0)
+	if (cursor == 0)
 		old_factor = 0;
 
 	/* Creates the effect of the cursor moving to the top of the window. */
-	if(old_factor > factor && cursor > old_factor)
+	if (old_factor > factor && cursor > old_factor)
 		factor = old_factor;
 
 	/* Scroll up only after the cursor hits the top margin.	 */
-	else if(old_factor > factor)
+	else if (old_factor > factor)
 		factor = old_factor - 1;
 
 	old_factor = factor;
@@ -151,17 +146,15 @@ main_display_files(display_t dir_display, int cursor)
 	move(cursor - factor, DISPLAY_M_LIST);
 }
 
-void
-preview_display_files(display_t *main_display,
-		      display_t *preview_display, int cursor)
+void preview_display_files(display_t *main_display, display_t *preview_display,
+			   int cursor)
 {
 	char tmp[2048];
 
 	strcpy(preview_display->files.dir, main_display->files.list[cursor]);
 	sprintf(tmp, "%s/%s", config.path, preview_display->files.dir);
 
-	if(list_files(preview_display, tmp) != 0)
-	{
+	if (list_files(preview_display, tmp) != 0) {
 		wclear(preview_display->screen);
 		wrefresh(preview_display->screen);
 
@@ -171,18 +164,15 @@ preview_display_files(display_t *main_display,
 	display_files(*preview_display, 0);
 }
 
-void
-draw_path(void)
+void draw_path(void)
 {
-	char   path[1024];
+	char path[1024];
 	size_t size = strlen(config.envp[3]);
 
-	if(strncmp(config.path, config.envp[3], size) == 0)
-	{
+	if (strncmp(config.path, config.envp[3], size) == 0) {
 		strcpy(path, "~");
-		strcat(path, config.path+size);
-	}
-	else
+		strcat(path, config.path + size);
+	} else
 		strcpy(path, config.path);
 
 	char host_name[1024];
@@ -192,8 +182,8 @@ draw_path(void)
 	clear();
 	attron(A_UNDERLINE);
 
-	mvwprintw(stdscr, config.size.y-1, 0, "%s@%s: %s",
-		  config.envp[4], host_name, path);
+	mvwprintw(stdscr, config.size.y - 1, 0, "%s@%s: %s", config.envp[4],
+		  host_name, path);
 
 	attroff(A_UNDERLINE);
 	refresh();

@@ -1,31 +1,27 @@
 #ifndef DIR_H
 #define DIR_H
 
-#include <ncurses.h>
 #include <dirent.h>
+#include <ncurses.h>
 #include <stddef.h>
 
 #define FILE_LIST_SZ 100
 
-struct config
-{
+struct config {
 	short int hidden; // 1 = show hidden files
 	char *envp[5];
 	char path[PATH_MAX];
 
-	struct size
-	{
+	struct size {
 		size_t x;
 		size_t y;
 	} size;
 } config;
 
-struct dir_display
-{
+struct dir_display {
 	WINDOW *screen;
 
-	struct files
-	{
+	struct files {
 		size_t size;
 		size_t mem_count;
 		size_t mem_alloc;
@@ -35,8 +31,7 @@ struct dir_display
 		char dir[MAXNAMLEN];
 	} files;
 
-	struct position
-	{
+	struct position {
 		int x[2];
 		int y[2];
 	} position;
@@ -45,12 +40,9 @@ struct dir_display
 typedef struct dir_display display_t;
 
 // Shall check if the path points to an accessible file
-int
-is_file(char *path);
+int is_file(char *path);
 
-int
-list_files(display_t *dir_display, char *path);
+int list_files(display_t *dir_display, char *path);
 
-void
-file_open(display_t *dir, int cursor);
+void file_open(display_t *dir, int cursor);
 #endif /* DIR_H */

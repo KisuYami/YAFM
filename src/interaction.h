@@ -3,8 +3,8 @@
 
 #include <stddef.h>
 
-#include "dir.h"
 #include "./display.h"
+#include "dir.h"
 
 enum selection_type {
 	SEC_CLIP_YANK = 1,
@@ -18,17 +18,12 @@ struct selection {
 	char files[100][MAXNAMLEN];
 } file_selection;
 
-void
-handle_input(display_t *main_display, int *cursor, char key);
+void handle_input(display_t *main_display, int *cursor, char key);
 
-void
-selection_copy(display_t *dir_display);
+void selection_copy(display_t *dir_display);
 
-int
-selection_del(display_t *dir_display);
+int selection_del(display_t *dir_display);
 
-void
-selection_paste(void);
-
+void selection_paste(void);
 
 #endif /* INTERACTION_H */
