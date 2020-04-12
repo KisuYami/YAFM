@@ -7,42 +7,33 @@
 
 #define FILE_LIST_SZ 100
 
-struct config {
-	short int hidden; // 1 = show hidden files
-	char *envp[5];
-	char path[PATH_MAX];
-
-	struct size {
-		size_t x;
-		size_t y;
-	} size;
-} config;
-
-struct dir_display {
+struct directory_display {
 	WINDOW *screen;
 
 	struct files {
-		size_t size;
-		size_t mem_count;
-		size_t mem_alloc;
+		size_t size;      /* total ammount of files in a dir */
+		size_t mem_count; /* memory allocated for the array */
+		size_t mem_alloc; /* memory allocated for the files names */
 
-		short int *marked;
-		char **list;
-		char dir[MAXNAMLEN];
+		short *marked;         /* files marked to be used in selection */
+		char **list;           /* where the file list is stored */
+		char   dir[MAXNAMLEN]; /* used to fix the files display colors */
 	} files;
 
+	/* position of the screen in the terminal window */
 	struct position {
 		int x[2];
 		int y[2];
 	} position;
 };
 
-typedef struct dir_display display_t;
+typedef struct directory_display display_t;
 
-// Shall check if the path points to an accessible file
 int is_file(char *path);
 
-int list_files(display_t *dir_display, char *path);
+/* get information from a directory and store it in files */
+int list_files(struct files *files, char *path);
 
-void file_open(display_t *dir, int cursor);
+/* call externel programs to read file contents*/
+int file_open(char *file_name);
 #endif /* DIR_H */

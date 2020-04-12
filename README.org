@@ -32,7 +32,8 @@ You can create an debug build with:
 #+BEGIN_SRC sh
 make DEBUG=1
 #+END_SRC
-
+*** Packages
+[[https://aur.archlinux.org/packages/kyfm-git/][Arch Linux]]
 ** Keybinds
 |---------+----------------------|
 | Key     | Action               |

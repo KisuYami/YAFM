@@ -11,13 +11,6 @@ int main(void)
 {
 	screen_setup();
 
-	// Needed to open files with externel programs...
-	config.envp[0] = getenv("IMAGE");
-	config.envp[1] = getenv("VIDEO");
-	config.envp[2] = getenv("DOCUMENTS");
-	config.envp[3] = getenv("HOME");
-	config.envp[4] = getenv("USER");
-
 	display_t main_display, preview_display;
 
 	init_displays(&main_display, &preview_display);
@@ -29,7 +22,7 @@ int main(void)
 
 	for (char key = getch(); key != KEY_QUIT; key = getch()) {
 		handle_input(&main_display, &cursor, key);
-		preview_display_files(&main_display, &preview_display, cursor);
+		display_p(&main_display, &preview_display, cursor);
 
 		// If terminal size has changed, update the window size
 		if (is_term_resized(config.size.y, config.size.x) == 1) {
@@ -49,9 +42,8 @@ int main(void)
 		/* surpasses the screen size, after that the window will only */
 		/* stop to redraw after the cursor hits the top of the window.*/
 		/**************************************************************/
-		if (cursor >= config.size.y - DISPLAY_M_CURS ||
-		    main_redraw == 1) {
-			main_display_files(main_display, cursor);
+		if (cursor >= config.size.y-DISPLAY_M_CURS || main_redraw == 1) {
+			display_m(main_display, cursor);
 			main_redraw = 1;
 
 			if (cursor == 0)

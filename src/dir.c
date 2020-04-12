@@ -8,14 +8,19 @@
 #include <sys/stat.h>
 #include <unistd.h>
 
+#include "../config.h"
 #include "dir.h"
+
+/*************************************************************/
+/* This module is used to get information about directories. */
+/*************************************************************/
 
 struct {
 	short int type; // 0 = Image, 1 = Video, 2 = Document
 	char *str;
 } file_ext_list[] = {
-    {0, "jpg"}, {0, "png"},  {0, "jpeg"}, {1, "mkv"}, {1, "mp4"},
-    {1, "avi"}, {1, "webm"}, {2, "pdf"},  {-1, NULL},
+	{0, "jpg"}, {0, "png"},	 {0, "jpeg"}, {1, "mkv"}, {1, "mp4"},
+	{1, "avi"}, {1, "webm"}, {2, "pdf"},  {-1, NULL},
 };
 
 static int compare(const void *p1, const void *p2)
@@ -30,108 +35,83 @@ int is_file(char *path)
 	return S_ISDIR(path_to_file.st_mode);
 }
 
-int list_files(display_t *dir_display, char *path)
+int list_files(struct files *files, char *path)
 {
-	DIR *d = NULL;
-
 	if (!path)
 		getcwd(config.path, PATH_MAX);
 
-	d = opendir((!path) ? config.path : path);
+	DIR *d = opendir((!path) ? config.path : path);
 
 	if (!d)
 		return -1;
 
-	if (dir_display->files.mem_count == 0) {
-		dir_display->files.list = calloc(FILE_LIST_SZ, sizeof(char **));
-		dir_display->files.mem_count = FILE_LIST_SZ;
+	if (0 == files->mem_count) {
+		files->list = calloc(FILE_LIST_SZ, sizeof(char **));
+		files->mem_count = FILE_LIST_SZ;
 	}
 
-	dir_display->files.size = 0;
+	files->size = 0;
 
 	for (struct dirent *dir = readdir(d); dir != NULL; dir = readdir(d)) {
-		if (dir_display->files.size >= dir_display->files.mem_count) {
-			dir_display->files.mem_count += FILE_LIST_SZ;
-			dir_display->files.list = realloc(dir_display->files.list,
-							  dir_display->files.mem_count * sizeof(char **));
+		if (files->size >= files->mem_count) {
+			files->mem_count += FILE_LIST_SZ;
+			files->list = realloc(files->list, files->mem_count *
+					      sizeof(char **));
 		}
 		// Don't Show hidden files
 		if (config.hidden || *dir->d_name != '.') {
-			if (dir_display->files.size >= dir_display->files.mem_alloc) {
-				dir_display->files.list[dir_display->files.size] =
-				  malloc(MAXNAMLEN);
-
-				dir_display->files.mem_alloc++;
+			if (files->size >= files->mem_alloc) {
+				files->list[files->size] = malloc(MAXNAMLEN);
+				files->mem_alloc++;
 			}
 
-			strcpy(dir_display->files.list[dir_display->files.size],
-			       dir->d_name);
-
-			dir_display->files.size++;
+			strcpy(files->list[files->size], dir->d_name);
+			files->size++;
 		}
 	}
 
 	closedir(d);
 
-	if (dir_display->files.size == 0) {
-		if (dir_display->files.marked)
-			free(dir_display->files.marked);
+	if (files->size == 0) {
+		if (files->marked)
+			free(files->marked);
 
-		dir_display->files.marked = NULL;
+		files->marked = NULL;
 
 		return -1;
 	}
 
-	qsort(&dir_display->files.list[0], dir_display->files.size,
-	      sizeof(char *), compare);
+	qsort(&files->list[0], files->size, sizeof(char *), compare);
 
-	if (dir_display->files.marked)
-		free(dir_display->files.marked);
+	if (files->marked)
+		free(files->marked);
 
-	dir_display->files.marked =
-	    calloc(dir_display->files.size, sizeof(short int));
+	files->marked = calloc(files->size, sizeof(short int));
 
 	return 0;
 }
 
-static const char *file_extension(const char *filename)
-{
-	const char *dot = strrchr(filename, '.');
-
-	if (!dot || dot == filename)
-		return NULL;
-
-	return dot + 1;
-}
-
-void file_open(display_t *dir, int cursor)
+int file_open(char *file_name)
 {
 	// Get the extension
-	const char *extension = file_extension(dir->files.list[cursor]);
+	const char *extension = strrchr(file_name, '.');
 
 	if (!extension)
-		return;
+		return -1;
 
 	int file_type = -1;
 
 	for (int i = 0; file_ext_list[i].type != -1; ++i) {
-		if (strcmp(extension, file_ext_list[i].str) == 0) {
+		if (extension[1] == file_ext_list[i].str[0]) {
 			file_type = file_ext_list[i].type;
 			break;
 		}
 	}
 
-	if (file_type == -1)
-		return; // Non listed file type found
+	if (file_type == -1 || !config.envp.defaults[file_type])
+		return -1;
 
-	if (!config.envp[file_type]) {
-		fprintf(stderr, "YAFM: enviroment variable missing");
-		return;
-	}
-
-	pid_t child = fork();
-
-	if (child == 0) {
+	if (fork() == 0) {
 		int fd = open("/dev/null", O_WRONLY);
 		// No output or input
 		dup2(fd, STDOUT_FILENO);
@@ -139,8 +119,10 @@ void file_open(display_t *dir, int cursor)
 		dup2(fd, STDERR_FILENO);
 		close(fd);
 
-		execlp(config.envp[file_type], config.envp[file_type],
-		       dir->files.list[cursor], (char *)NULL);
+		execlp(config.envp.defaults[file_type], config.envp.defaults[file_type],
+		       file_name, (char *)NULL);
 		exit(0);
 	}
+
+	return 0;
 }
