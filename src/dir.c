@@ -19,7 +19,7 @@ struct {
 	short int type; // 0 = Image, 1 = Video, 2 = Document
 	char *str;
 } file_ext_list[] = {
-	{0, "jpg"}, {0, "png"},	 {0, "jpeg"}, {1, "mkv"}, {1, "mp4"},
+	{0, "jpg"}, {0, "png"},	 {0, "jpeg"}, {1, "gif"}, {1, "mkv"}, {1, "mp4"},
 	{1, "avi"}, {1, "webm"}, {2, "pdf"},  {-1, NULL},
 };
 
@@ -35,6 +35,13 @@ int is_file(char *path)
 	return S_ISDIR(path_to_file.st_mode);
 }
 
+/*****************************************************************************/
+/*			   Memorie related algorithm:			     */
+/*   The memorie allocated for the file list will only be freed when the     */
+/* program exits, all the memorie already allocated will be reused and	     */
+/* only expanded when needed, that should make the malloc/realloc overhead   */
+/* less impactful							     */
+/*****************************************************************************/
 int list_files(struct files *files, char *path)
 {
 	if (!path)
@@ -93,7 +100,6 @@ int list_files(struct files *files, char *path)
 
 int file_open(char *file_name)
 {
-	// Get the extension
 	const char *extension = strrchr(file_name, '.');
 
 	if (!extension)

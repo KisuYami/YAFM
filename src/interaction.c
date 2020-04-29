@@ -129,11 +129,10 @@ void sel_paste(void)
 
 int sel_del(display_t *dir_display)
 {
-	char phrase_final[] = "Proceed with deletion of files? (y/N)";
 	move(config.size.y - 1, 0); // move to begining of line
 	clrtoeol();		    // Clean displayed path
 
-	mvprintw(config.size.y - 1, 1, phrase_final);
+	mvprintw(config.size.y - 1, 1, "Proceed with deletion of files? (y/N)");
 	refresh();
 
 	char key = getchar();
