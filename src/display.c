@@ -34,42 +34,43 @@ void screen_setup(void)
 	gethostname(config.envp.host_name, 1024);
 }
 
+static int create_display(display_t *display, int pos[4])
+{
+	*display = (display_t){
+		.screen = newwin(pos[1], pos[3], pos[0], pos[2]),
+		.position = (struct position){
+			.y[0] = pos[0],
+			.y[1] = pos[1],
+			.x[0] = pos[2],
+			.x[1] = pos[3],
+		},
+	};
+
+	if (!display->screen) {
+		delwin(display->screen);
+		perror("kyfm: failed to create window");
+
+		return -1;
+	}
+
+	return 0;
+}
+
 void init_displays(display_t *main_display, display_t *preview_display)
 {
-	*main_display = (display_t){
-		.screen = newwin(config.size.y - DISPLAY_M_PATH,
-				 config.size.x / 2, 0, 0),
-		.position = (struct position){
-			.y[0] = 0,
-			.y[1] = config.size.y - DISPLAY_M_PATH,
-			.x[0] = 0,
-			.x[1] = config.size.x / 2,
-		},
-	};
+	int ret = create_display(main_display, (int[4]){0,
+			config.size.y-DISPLAY_M_PATH, 0, config.size.x/2});
 
-	// see display_files()
+	if(ret != 0)
+		exit(-1);
+
 	strcpy(main_display->files.dir, "./");
 
-	*preview_display = (display_t){
-		.screen = newwin(config.size.y - DISPLAY_M_PATH,
-				 config.size.x / 2, 0, config.size.x / 2),
-		.position = (struct position){
-			.y[0] = 0,
-			.y[1] = config.size.y - DISPLAY_M_PATH,
-			.x[0] = config.size.x / 2,
-			.x[1] = config.size.x / 2,
-		},
-	};
+	ret = create_display(preview_display, (int[4]){0, config.size.y-DISPLAY_M_PATH,
+			config.size.x/2, config.size.x/2});
 
-	if (!main_display->screen || !preview_display->screen) {
-		if (main_display->screen)
-			delwin(main_display->screen);
-
-		endwin();
-
-		perror("Failed to create windows");
+	if(ret != 0) /* TODO: handle errors */
 		exit(-1);
-	}
 
 	if (list_files(&main_display->files, NULL) == -1) {
 		delwin(main_display->screen);
@@ -117,20 +118,20 @@ static void display_files(display_t dir_display, int factor)
 
 	for (int i = factor; i < dir_display.files.size && (i-factor) <= dir_display.position.y[1]; i++) {
 		if (dir_display.files.marked[i])
-			mvwprintw(dir_display.screen, i - factor,
-				  DISPLAY_M_MARK, "*");
+			mvwprintw(dir_display.screen, i - factor, DISPLAY_M_MARK,
+				  "*");
 
-		if (!is_file(dir_display.files.list[i])) {
-			wattron(dir_display.screen, COLOR_PAIR(1));
+		short int attr_change = 0;
 
-			mvwprintw(dir_display.screen, i - factor, DISPLAY_M_LIST,
-				  dir_display.files.list[i]);
+		if (!is_file(dir_display.files.list[i]))
+			attr_change = COLOR_PAIR(1);
 
-			wattroff(dir_display.screen, COLOR_PAIR(1));
-		}
-		else
-			mvwprintw(dir_display.screen, i - factor, DISPLAY_M_LIST,
-				  dir_display.files.list[i]);
+		wattron(dir_display.screen, attr_change);
+
+		mvwprintw(dir_display.screen, i - factor, DISPLAY_M_LIST,
+			  dir_display.files.list[i]);
+
+		wattroff(dir_display.screen, attr_change);
 	}
 
 	chdir(config.path);

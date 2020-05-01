@@ -34,7 +34,3 @@ endif
 
 clean:
 	$(RM) -r $(BUILD_DIR)
-	$(RM) -r pkg
-	$(RM) -r kyfm
-	$(RM) -r src/kyfm
-	$(RM) -r *.pkg.*
