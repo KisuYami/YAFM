@@ -3,7 +3,7 @@ TARGET_EXEC = kyfm
 CC 	= gcc
 CLIBS 	= -lncurses
 CFLAGS 	= -O3
-DEBUG_CFLAGS = -Wall -Werror -pedantic -ggdb3 -Wno-error=unknown-pragmas -fanalyzer
+DEBUG_CFLAGS = -Wall -Werror -pedantic -ggdb3 -Wno-error=unknown-pragmas
 
 SRC_DIRS 	= ./src
 BUILD_DIR 	= ./build

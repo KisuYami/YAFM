@@ -1,0 +1,9 @@
+image: "archlinux:latest"
+
+before_script:
+  - pacman --noconfirm -Syu ncurses make gcc valgrind bash
+
+Compiles:
+  script:
+  - make clean
+  - make DEBUG=1
