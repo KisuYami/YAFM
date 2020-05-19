@@ -2,14 +2,6 @@
 KYFM(KysuYami File Manager) is an filemanager meant to be used within terminals and has the interface
 made with ncurses. The focus is of this project is to developt an file manager with the suckless
 philosophy in mind, that leads to only implement features that are needed.
-
-[[https://github.com/KisuYami/kyfm/releases/tag/v1.3][https://img.shields.io/badge/version-v1.3-green.svg]]
-[[https://github.com/KisuYami/kyfm/issues][https://img.shields.io/github/issues/KisuYami/KYFM.svg]]
-[[https://github.com/KisuYami/kyfm/graphs/commit-activity][https://img.shields.io/github/commit-activity/m/KisuYami/KYFM.svg]]
-[[https://github.com/KisuYami/kyfm/graphs/contributors][https://img.shields.io/github/contributors/KisuYami/KYFM.svg]]
-[[https://github.com/mirror/ncurses][https://img.shields.io/badge/dependencies-ncurses-blue.svg]]
-[[https://www.gnu.org/licenses/old-licenses/gpl-2.0.en.html][https://img.shields.io/badge/License-GPL%20v2-blue.svg]]
-[[https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=N5WTQZKNY8ABY&source=url][https://img.shields.io/badge/PayPal-Coffe!-orange.svg]]
       
 [[file:./preview.png]]
 
@@ -48,30 +40,3 @@ make DEBUG=1
 | =d=     | cut                  |
 | =D=     | delete               |
 |---------+----------------------|
-
-** Change Log
-*** v1.3
-- Clear source code interface (with the source code rewrinten from scrath)
-- ADDED:
-  + Arch Linux PKGBUILD
-  + File counter
-  + Ranger like path
-- FIXES:
-  + Buffer overflow in display.c
-  + Limited ammount of files that could be read form directories
-  + Wrong colors in the preview display
-  + File deletion now uses the standard POSIX remove function (also remove fork)
-  + Changing sys/types.h to limits.h for better portability (dir.c)
-- Removed old packaging script.
-*** v1.1
-- License
-- ADDED:
-  + Show hidden files
-  + Packages creator script
-  + New way to hanlde clippboards
-  + Fixed hidden/show files
-  + Clear code base
-
-*** v1.0
-- Better Makefile
-- Removed libmagic based file opener
