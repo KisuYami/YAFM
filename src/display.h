@@ -3,11 +3,6 @@
 
 #include "dir.h"
 
-// TODO: fix over screen displaying
-#define DRAW_FMA(cursor, ammount)                                              \
-	mvwprintw(stdscr, config.size.y - 1, config.size.x - 6, "%d/%d",       \
-		  cursor + 1, ammount);
-
 enum DISPLAY_MARGIN {
 	DISPLAY_M_PATH = 1,
 	DISPLAY_M_CURS = 2,
@@ -28,4 +23,6 @@ void display_m(display_t dir_display, int cursor);
 
 /* display files from the preview display */
 void display_p(display_t *main_display, display_t *preview_display, int cursor);
+
+void display_f(int cursor, int ammount);
 #endif /* DISPLAY_H */

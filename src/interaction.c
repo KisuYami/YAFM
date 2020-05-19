@@ -11,6 +11,8 @@
 /*	 The user input and the clipboard are hadled here		     */
 /*****************************************************************************/
 
+struct selection file_selection;
+
 void handle_input(display_t *main_display, int *cursor, char key)
 {
 	switch (key) {

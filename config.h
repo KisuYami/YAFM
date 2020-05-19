@@ -22,7 +22,9 @@ struct config {
 		size_t x;
 		size_t y;
 	} size;
-} config;
+};
+
+extern struct config config;
 
 #define KEY_QUIT	'q'
 #define KEY_MOV_UP	'k'

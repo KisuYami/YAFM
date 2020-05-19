@@ -7,6 +7,8 @@
 #include "display.h"
 #include "interaction.h"
 
+struct config config;
+
 int main(void)
 {
 	screen_setup();
@@ -34,7 +36,7 @@ int main(void)
 			init_displays(&main_display, &preview_display);
 		}
 
-		DRAW_FMA(cursor, main_display.files.size);
+		display_f(cursor, main_display.files.size);
 		move(cursor, DISPLAY_M_LIST);
 
 		/**************************************************************/

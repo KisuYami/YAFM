@@ -18,7 +18,9 @@ struct selection {
 	size_t size; /* ammount of files selected */
 
 	char   files[100][MAXNAMLEN]; /* list of files names */
-} file_selection;
+};
+
+extern struct selection file_selection;
 
 void handle_input(display_t *main_display, int *cursor, char key);
 

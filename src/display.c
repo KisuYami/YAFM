@@ -82,7 +82,7 @@ void init_displays(display_t *main_display, display_t *preview_display)
 	}
 
 	draw_path();
-	DRAW_FMA(0, main_display->files.size);
+	display_f(0, main_display->files.size);
 
 	display_p(main_display, preview_display, 0);
 	display_m(*main_display, 0);
@@ -188,4 +188,14 @@ void display_p(display_t *main_display, display_t *preview_display,
 	}
 
 	display_files(*preview_display, 0);
+}
+
+
+/* TODO: Try to check ther needed margin */
+void display_f(int cursor, int ammount)
+{
+	int factor = 6;
+
+	mvwprintw(stdscr, config.size.y - 1, config.size.x - factor, "%d/%d",
+		  cursor + 1, ammount);
 }
