@@ -5,6 +5,10 @@
 #include <ncurses.h>
 #include <stddef.h>
 
+#ifndef MAXNAMLEN
+#define MAXNAMLEN 255
+#endif
+
 #define FILE_LIST_SZ 100
 
 struct directory_display {
