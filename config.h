@@ -2,6 +2,7 @@
 #define CONFIG_HEADER_FILE
 
 #include <dirent.h>
+#include "./src/dir.h"
 
 struct config {
 	short int hidden; /* 1 = show hidden files */

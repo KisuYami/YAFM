@@ -9,6 +9,10 @@
 #define MAXNAMLEN 255
 #endif
 
+#ifndef PATH_MAX
+#define PATH_MAX 4096
+#endif
+
 #define FILE_LIST_SZ 100
 
 struct directory_display {
