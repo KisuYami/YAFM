@@ -24,6 +24,7 @@ extern struct selection file_selection;
 
 void handle_input(display_t *main_display, int *cursor, char key);
 
+int ask_usr(char *text);
 
 /* copy marked files from dir_display to the selection */
 void sel_copy(display_t *dir_display);

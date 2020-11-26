@@ -6,10 +6,12 @@
 #include <stdlib.h>
 #include <string.h>
 #include <sys/stat.h>
+#include <sys/wait.h>
 #include <unistd.h>
 
 #include "../config.h"
 #include "dir.h"
+#include "interaction.h"
 
 /*************************************************************/
 /* This module is used to get information about directories. */
@@ -19,8 +21,9 @@ struct {
 	short int type; // 0 = Image, 1 = Video, 2 = Document
 	char *str;
 } file_ext_list[] = {
-	{0, "jpg"}, {0, "png"},	 {0, "jpeg"}, {1, "gif"}, {1, "mkv"}, {1, "mp4"},
-	{1, "avi"}, {1, "webm"}, {2, "pdf"},  {-1, NULL},
+	{ 0, "jpg" },  { 0, "jpeg" }, { 0, "png" }, { 0, "jpeg" },
+	{ 1, "gif" },  { 1, "mkv" },  { 1, "mp4" }, { 1, "avi" },
+	{ 1, "webm" }, { 2, "pdf" },  { -1, NULL },
 };
 
 static int compare(const void *p1, const void *p2)
@@ -62,8 +65,9 @@ int list_files(struct files *files, char *path)
 	for (struct dirent *dir = readdir(d); dir != NULL; dir = readdir(d)) {
 		if (files->size >= files->mem_count) {
 			files->mem_count += FILE_LIST_SZ;
-			files->list = realloc(files->list, files->mem_count *
-					      sizeof(char **));
+			files->list =
+				realloc(files->list,
+					files->mem_count * sizeof(char **));
 		}
 		// Don't Show hidden files
 		if (config.hidden || *dir->d_name != '.') {
@@ -114,21 +118,32 @@ int file_open(char *file_name)
 		}
 	}
 
-	if (file_type == -1 || !config.envp.defaults[file_type])
-		return -1;
+	if (file_type == -1 || !config.envp.defaults[file_type]) {
+		if (ask_usr("File type unknow, open with the default editor?(y/n)") !=
+		    0)
+			return -1;
+
+		file_type = 3; // editor file type
+	}
 
 	if (fork() == 0) {
-		int fd = open("/dev/null", O_WRONLY);
-		// No output or input
-		dup2(fd, STDOUT_FILENO);
-		dup2(fd, STDIN_FILENO);
-		dup2(fd, STDERR_FILENO);
-		close(fd);
+		if (file_type < 3) {
+			int fd = open("/dev/null", O_WRONLY);
+			// No output or input
+			dup2(fd, STDOUT_FILENO);
+			dup2(fd, STDIN_FILENO);
+			dup2(fd, STDERR_FILENO);
+			close(fd);
+		}
 
-		execlp(config.envp.defaults[file_type], config.envp.defaults[file_type],
-		       file_name, (char *)NULL);
+		execlp(config.envp.defaults[file_type],
+		       config.envp.defaults[file_type], file_name,
+		       (char *)NULL);
+
 		exit(0);
 	}
+	if(file_type == 3)
+		wait(0);
 
 	return 0;
 }

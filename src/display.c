@@ -26,6 +26,7 @@ void screen_setup(void)
 		.defaults[0] = getenv("IMAGE"),
 		.defaults[1] = getenv("VIDEO"),
 		.defaults[2] = getenv("DOCUMENTS"),
+		.defaults[3] = getenv("EDITOR"),
 
 		.home_name = getenv("HOME"),
 		.user_name = getenv("USER"),

@@ -102,6 +102,22 @@ void handle_input(display_t *main_display, int *cursor, char key)
 	}
 }
 
+int ask_usr(char *text)
+{
+	move(config.size.y - 1, 0); // move to begining of line
+	clrtoeol();		    // Clean displayed path
+
+	mvprintw(config.size.y - 1, 1, text);
+	refresh();
+
+	char key = getchar();
+
+	if (key != 'y')
+		return -1; // user answear wans't "Yes"
+	
+	return 0;
+}
+
 void sel_copy(display_t *dir_display)
 {
 	file_selection.size = 0;
@@ -131,16 +147,8 @@ void sel_paste(void)
 
 int sel_del(display_t *dir_display)
 {
-	move(config.size.y - 1, 0); // move to begining of line
-	clrtoeol();		    // Clean displayed path
-
-	mvprintw(config.size.y - 1, 1, "Proceed with deletion of files? (y/N)");
-	refresh();
-
-	char key = getchar();
-
-	if (key != 'y')
-		return -1; // user answear wans't "Yes"
+	if(ask_usr("Are you sure you want to delete this files?(y/n)") != 0)
+		return -1;
 
 	sel_copy(dir_display);
 

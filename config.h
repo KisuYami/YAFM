@@ -10,7 +10,7 @@ struct config {
 
 	struct envp {
 		/* used to open files */
-		char *defaults[3];
+		char *defaults[4];
 
 		/* used to display the path */
 		char *user_name;
