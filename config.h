@@ -32,6 +32,8 @@ extern struct config config;
 #define KEY_MOV_DOWN	'j'
 #define KEY_MOV_LEFT	'h'
 #define KEY_MOV_RIGHT	'l'
+#define KEY_MOV_TOP	'g'
+#define KEY_MOV_BOTTOM	'G'
 
 #define KEY_FILE_MARK	' '
 #define KEY_FILE_DEL	'D'

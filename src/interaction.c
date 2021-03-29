@@ -52,6 +52,14 @@ void handle_input(display_t *main_display, int *cursor, char key)
 
 		break;
 
+	case KEY_MOV_TOP:
+		*cursor = 0;
+		break;
+
+	case KEY_MOV_BOTTOM:
+		*cursor = main_display->files.size-1;
+		break;
+
 	case KEY_FILE_OPEN:
 		file_open(main_display->files.list[*cursor]);
 		break;

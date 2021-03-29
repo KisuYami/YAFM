@@ -27,16 +27,18 @@ make DEBUG=1
 *** Packages
 [[https://aur.archlinux.org/packages/kyfm-git/][Arch Linux]]
 ** Keybinds
-|---------+----------------------|
-| Key     | Action               |
-|---------+----------------------|
-| =k=     | Up                   |
-| =j=     | Down                 |
-| =h=     | Left                 |
-| =l=     | Right                |
-| =z=     | Hidde/Show dot files |
-| =space= | Mark Files           |
-| =y=     | Yank                 |
-| =d=     | cut                  |
-| =D=     | delete               |
-|---------+----------------------|
+|---------+-----------------------|
+| Key     | Action                |
+|---------+-----------------------|
+| =k=     | Up                    |
+| =j=     | Down                  |
+| =h=     | Left                  |
+| =l=     | Right                 |
+| =g=     | Move curson to top    |
+| =G=     | Move curson to bottom |
+| =z=     | Hidde/Show dot files  |
+| =space= | Mark Files            |
+| =y=     | Yank                  |
+| =d=     | cut                   |
+| =D=     | delete                |
+|---------+-----------------------|

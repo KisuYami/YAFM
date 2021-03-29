@@ -196,6 +196,10 @@ void display_p(display_t *main_display, display_t *preview_display,
 void display_f(int cursor, int ammount)
 {
 	int factor = 6;
+	char str[15];
+
+	sprintf(str, "%d", ammount);
+	factor = (2 * strlen(str)) + 1;
 
 	mvwprintw(stdscr, config.size.y - 1, config.size.x - factor, "%d/%d",
 		  cursor + 1, ammount);
