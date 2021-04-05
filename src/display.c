@@ -92,9 +92,10 @@ void init_displays(display_t *main_display, display_t *preview_display)
 void draw_path(void)
 {
 	char path[1024];
+	int home_size = strlen(config.envp.home_name)-1;
 
-	if (strcmp(config.path, "/home") == 1)
-		sprintf(path, "~%s", config.path+strlen(config.envp.home_name));
+	if (strncmp(config.path, config.envp.home_name, home_size) == 0)
+		sprintf(path, "~%s", config.path+home_size);
 	else
 		strcpy(path, config.path);
 
@@ -195,12 +196,11 @@ void display_p(display_t *main_display, display_t *preview_display,
 /* TODO: Try to check ther needed margin */
 void display_f(int cursor, int ammount)
 {
-	int factor = 6;
 	char str[15];
 
-	sprintf(str, "%d", ammount);
-	factor = (2 * strlen(str)) + 1;
+	sprintf(str, "[%d/%d]", cursor+1, ammount);
 
-	mvwprintw(stdscr, config.size.y - 1, config.size.x - factor, "%d/%d",
-		  cursor + 1, ammount);
+	attron(A_UNDERLINE);
+	mvwprintw(stdscr, config.size.y - 1, config.size.x - strlen(str), str);
+	attroff(A_UNDERLINE);
 }
