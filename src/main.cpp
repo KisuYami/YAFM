@@ -22,46 +22,64 @@ int main(int argc, char *argv[])
 	int y, x;
 	getmaxyx(stdscr, y, x);
 
-	class display display_p;
+	class display d_primary, d_secondary;
 
 	//WINDOW *win = newwin(y, x / 2, 0, 0);
-	display_p.cursor = 0;
-	display_p.hidden = false;
-	display_p.path = get_current_dir_name();
+	d_primary.cursor = 0;
+	d_primary.hidden = false;
+	d_primary.path = get_current_dir_name();
 
-	display_p.create(y, x / 2, 0, 0);
-	display_p.list_files(NULL);
-	display_p.update();
+	d_primary.create(y, x / 2, 0, 0);
+	d_primary.list_files(NULL);
+	d_primary.update();
+
+	d_secondary.cursor = 0;
+	d_secondary.hidden = false;
+	d_secondary.path = get_current_dir_name();
+	d_secondary.path.append("/");
+	d_secondary.path.append(d_primary.file_list[0].c_str());
+
+	d_secondary.create(y, x / 2, 0, x / 2);
+	d_secondary.list_files(NULL);
+	d_secondary.update();
 
 	char key;
-	while ((key = wgetch(display_p.screen)) != 'q') {
+	while ((key = wgetch(d_primary.screen)) != 'q') {
 		switch (key) {
 		case 'k':
-			display_p.cursor -= (display_p.cursor <= 0) ? 0 : 1;
+			d_primary.cursor -= (d_primary.cursor <= 0) ? 0 : 1;
 			break;
 
 		case 'j':
-			display_p.cursor += (display_p.cursor >= y - 1) ? 0 : 1;
+			d_primary.cursor += (d_primary.cursor >= y - 1) ? 0 : 1;
 			break;
 		case 'h':
 			chdir("../");
-			display_p.path = get_current_dir_name();
-			display_p.list_files(NULL);
+			d_primary.path = get_current_dir_name();
+			d_primary.list_files(NULL);
 			break;
 		case 'l':
-			chdir(display_p.file_list[display_p.cursor].c_str());
-			display_p.path = get_current_dir_name();
-			display_p.list_files(NULL);
+			chdir(d_primary.file_list[d_primary.cursor].c_str());
+			d_primary.path = get_current_dir_name();
+			d_primary.list_files(NULL);
 			break;
 		case '.':
-			display_p.hidden = !display_p.hidden;
-			display_p.list_files(NULL);
+			d_primary.hidden = !d_primary.hidden;
+			d_primary.list_files(NULL);
 			break;
 		}
-		display_p.update();
+		d_primary.update();
+
+		d_secondary.path = get_current_dir_name();
+		d_secondary.path.append("/");
+		d_secondary.path.append(
+			d_primary.file_list[d_primary.cursor].c_str());
+
+		d_secondary.list_files(NULL);
+		d_secondary.update();
 	}
 
-	display_p.clean();
+	d_primary.clean();
 	endwin();
 
 	return 0;
