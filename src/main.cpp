@@ -1,5 +1,6 @@
 #include <cstdio>
 #include <iostream>
+#include <unistd.h>
 #include <ncurses.h>
 
 #include "screen.hh"
@@ -24,8 +25,12 @@ int main(int argc, char *argv[])
 	class display display_p;
 
 	//WINDOW *win = newwin(y, x / 2, 0, 0);
-	display_p.create(y, x / 2, 0, 0);
 	display_p.cursor = 0;
+	display_p.hidden = false;
+	display_p.path = get_current_dir_name();
+
+	display_p.create(y, x / 2, 0, 0);
+	display_p.list_files(NULL);
 	display_p.update();
 
 	char key;
@@ -33,14 +38,17 @@ int main(int argc, char *argv[])
 		switch (key) {
 		case 'k':
 			display_p.cursor -= (display_p.cursor <= 0) ? 0 : 1;
-			display_p.update();
 			break;
 
 		case 'j':
 			display_p.cursor += (display_p.cursor >= y - 1) ? 0 : 1;
-			display_p.update();
+			break;
+		case '.':
+			display_p.hidden = !display_p.hidden;
+			display_p.list_files(NULL);
 			break;
 		}
+		display_p.update();
 	}
 
 	display_p.clean();

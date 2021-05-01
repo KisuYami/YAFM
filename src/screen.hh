@@ -5,12 +5,16 @@
 #include <string>
 
 #include <stdio.h>
-#include <stdlib.h>
+#include <dirent.h>
+#include <sys/types.h>
 #include <ncurses/ncurses.h>
 
 class display {
     public:
 	WINDOW *screen;
+
+	std::string path;
+	bool hidden;
 	int cursor;
 
 	std::vector<std::string> file_list;
@@ -55,9 +59,20 @@ class display {
 		wrefresh(screen);
 	}
 
-	void refresh()
+	void list_files(char *new_path)
 	{
-		wrefresh(screen);
+		file_list.clear();
+
+		DIR *d = opendir((!new_path) ? path.c_str() : new_path);
+
+		if (!d)
+			return;
+
+		for (struct dirent *dir = readdir(d); dir != NULL;
+		     dir = readdir(d)) {
+			if (hidden || *dir->d_name != '.')
+				file_list.push_back(dir->d_name);
+		}
 	}
 
 	void clean()
