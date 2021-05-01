@@ -29,7 +29,7 @@ int main(int argc, char *argv[])
 	d_primary.hidden = false;
 	d_primary.path = get_current_dir_name();
 
-	d_primary.create(y, x / 2, 0, 0);
+	d_primary.create(y - 3, x / 2, 0, 0);
 	d_primary.list_files(NULL);
 	d_primary.update();
 
@@ -39,9 +39,21 @@ int main(int argc, char *argv[])
 	d_secondary.path.append("/");
 	d_secondary.path.append(d_primary.file_list[0].c_str());
 
-	d_secondary.create(y, x / 2, 0, x / 2);
+	d_secondary.create(y - 3, x / 2, 0, x / 2);
 	d_secondary.list_files(NULL);
 	d_secondary.update();
+
+	class path cpath;
+
+	cpath.create(3, x, y - 3, 0);
+	cpath.prefix = "user@test";
+
+	cpath.prefix = getenv("USER");
+	cpath.prefix.append("@");
+	cpath.prefix.append(getenv("HOSTNAME"));
+
+	cpath.path = get_current_dir_name();
+	cpath.update();
 
 	char key;
 	while ((key = wgetch(d_primary.screen)) != 'q') {
@@ -51,17 +63,27 @@ int main(int argc, char *argv[])
 			break;
 
 		case 'j':
-			d_primary.cursor += (d_primary.cursor >= y - 1) ? 0 : 1;
+			d_primary.cursor += (d_primary.cursor >= y - 4) ? 0 : 1;
 			break;
 		case 'h':
 			chdir("../");
+
+			d_primary.cursor = 0;
 			d_primary.path = get_current_dir_name();
 			d_primary.list_files(NULL);
+
+			cpath.path = get_current_dir_name();
+			cpath.update();
 			break;
 		case 'l':
 			chdir(d_primary.file_list[d_primary.cursor].c_str());
+
+			d_primary.cursor = 0;
 			d_primary.path = get_current_dir_name();
 			d_primary.list_files(NULL);
+
+			cpath.path = get_current_dir_name();
+			cpath.update();
 			break;
 		case '.':
 			d_primary.hidden = !d_primary.hidden;
@@ -79,7 +101,10 @@ int main(int argc, char *argv[])
 		d_secondary.update();
 	}
 
-	d_primary.clean();
+	delwin(d_primary.screen);
+	delwin(d_secondary.screen);
+	delwin(cpath.screen);
+
 	endwin();
 
 	return 0;

@@ -74,10 +74,41 @@ class display {
 				file_list.push_back(dir->d_name);
 		}
 	}
+};
 
-	void clean()
+class path {
+    public:
+	WINDOW *screen;
+
+	std::string prefix;
+	std::string path;
+
+	int y[2];
+	int x[2];
+
+	void create(int nlines, int ncols, int begin_y, int begin_x)
 	{
-		delwin(screen);
+		x[0] = begin_x;
+		x[1] = nlines;
+
+		y[0] = begin_y;
+		y[1] = ncols;
+
+		screen = newwin(x[1], y[1], y[0], x[0]);
+		if (screen == NULL) {
+			delwin(screen);
+			perror("KYFM: Failed to create window.");
+
+			exit(-1);
+		}
+		box(screen, 0, 0);
+	}
+
+	void update(void)
+	{
+		box(screen, 0, 0);
+		mvwprintw(screen, 1, 1, "%s: %s", prefix.c_str(), path.c_str());
+		wrefresh(screen);
 	}
 };
 #endif // SCREEN_H_
