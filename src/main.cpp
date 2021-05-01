@@ -43,6 +43,16 @@ int main(int argc, char *argv[])
 		case 'j':
 			display_p.cursor += (display_p.cursor >= y - 1) ? 0 : 1;
 			break;
+		case 'h':
+			chdir("../");
+			display_p.path = get_current_dir_name();
+			display_p.list_files(NULL);
+			break;
+		case 'l':
+			chdir(display_p.file_list[display_p.cursor].c_str());
+			display_p.path = get_current_dir_name();
+			display_p.list_files(NULL);
+			break;
 		case '.':
 			display_p.hidden = !display_p.hidden;
 			display_p.list_files(NULL);
