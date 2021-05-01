@@ -1,8 +1,8 @@
 TARGET_EXEC = kyfm
 
-CC 	= gcc
-CLIBS 	= -lncurses
-CFLAGS 	= -O3
+CC 	= g++
+CLIBS= -lncurses
+CFLAGS 	= -O3 -std=c++11
 DEBUG_CFLAGS = -Wall -Werror -pedantic -ggdb3 -Wno-error=unknown-pragmas
 
 SRC_DIRS 	= ./src
@@ -15,7 +15,7 @@ OBJS = $(SRCS:%=$(BUILD_DIR)/%.o)
 $(BUILD_DIR)/$(TARGET_EXEC): $(OBJS)
 	$(CC) $(OBJS) -o $@ $(LDFLAGS) $(CLIBS)
 
-$(BUILD_DIR)/%.c.o: %.c
+$(BUILD_DIR)/%.cpp.o: %.cpp
 	mkdir -p $(dir $@)
 ifdef DEBUG
 	$(CC) $(DEBUG_CFLAGS) -c $< -o $@
