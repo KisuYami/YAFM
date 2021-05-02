@@ -72,7 +72,7 @@ int main(int argc, char *argv[])
 
 		case 'j':
 			d_primary.cursor += (d_primary.cursor >=
-					     d_primary.file_list.size()) ?
+					     d_primary.file_list.size() - 1) ?
 							  0 :
 							  1;
 
