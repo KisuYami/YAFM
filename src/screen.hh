@@ -6,18 +6,13 @@
 
 #include <stdio.h>
 #include <dirent.h>
+#include <unistd.h>
 #include <sys/types.h>
 #include <ncurses/ncurses.h>
 
-class display {
+class screen {
     public:
 	WINDOW *screen;
-
-	std::string path;
-	bool hidden;
-	int cursor;
-
-	std::vector<std::string> file_list;
 
 	int y[2];
 	int x[2];
@@ -39,24 +34,40 @@ class display {
 		}
 		box(screen, 0, 0);
 	}
+};
+
+class display {
+    public:
+	int cursor;
+	bool hidden;
+
+	std::string name;
+	std::string path;
+
+	std::vector<std::string> file_list;
+
+	class screen screen;
 
 	void update()
 	{
-		wclear(screen);
-		for (int i = cursor; (i < file_list.size()) && (i < x[1]);
+		wclear(screen.screen);
+		box(screen.screen, 0, 0);
+
+		for (int i = cursor;
+		     (i < file_list.size()) && ((i - cursor + 1) < screen.x[1]);
 		     ++i) {
 			if (i == cursor) {
-				wattron(screen, A_REVERSE);
-				mvwprintw(screen, i - cursor + 1, 2,
+				wattron(screen.screen, A_REVERSE);
+				mvwprintw(screen.screen, i - cursor + 1, 2,
 					  file_list[i].c_str());
-				wattroff(screen, A_REVERSE);
+				wattroff(screen.screen, A_REVERSE);
 			} else
-				mvwprintw(screen, i - cursor + 1, 2,
+				mvwprintw(screen.screen, i - cursor + 1, 2,
 					  file_list[i].c_str());
 		}
 
-		box(screen, 0, 0);
-		wrefresh(screen);
+		mvwprintw(screen.screen, 0, 3, name.c_str());
+		wrefresh(screen.screen);
 	}
 
 	void list_files(char *new_path)
@@ -78,37 +89,39 @@ class display {
 
 class path {
     public:
-	WINDOW *screen;
-
 	std::string prefix;
 	std::string path;
 
-	int y[2];
-	int x[2];
-
-	void create(int nlines, int ncols, int begin_y, int begin_x)
-	{
-		x[0] = begin_x;
-		x[1] = nlines;
-
-		y[0] = begin_y;
-		y[1] = ncols;
-
-		screen = newwin(x[1], y[1], y[0], x[0]);
-		if (screen == NULL) {
-			delwin(screen);
-			perror("KYFM: Failed to create window.");
-
-			exit(-1);
-		}
-		box(screen, 0, 0);
-	}
+	class screen screen;
 
 	void update(void)
 	{
-		box(screen, 0, 0);
-		mvwprintw(screen, 1, 1, "%s: %s", prefix.c_str(), path.c_str());
-		wrefresh(screen);
+		box(screen.screen, 0, 0);
+
+		path = get_current_dir_name();
+		mvwprintw(screen.screen, 0, 3, "Path");
+		mvwprintw(screen.screen, 1, 2, "%s: %s", prefix.c_str(),
+			  path.c_str());
+		wrefresh(screen.screen);
+	}
+};
+
+class counter {
+    public:
+	int cursor;
+	int ammount;
+
+	class screen screen;
+
+	void update(void)
+	{
+		box(screen.screen, 0, 0);
+
+		mvwprintw(screen.screen, 0, 3, "File Counter");
+
+		// +1 so the counter starts at 1 not 0
+		mvwprintw(screen.screen, 1, 2, "%d/%d", cursor + 1, ammount);
+		wrefresh(screen.screen);
 	}
 };
 #endif // SCREEN_H_
