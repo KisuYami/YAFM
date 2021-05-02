@@ -4,9 +4,8 @@
 #include <ncurses.h>
 
 #include "screen.hh"
+#include "interaction.hh"
 #include <ncurses/ncurses.h>
-
-using namespace std;
 
 int main(int argc, char *argv[])
 {
@@ -22,21 +21,13 @@ int main(int argc, char *argv[])
 	int y, x;
 	getmaxyx(stdscr, y, x);
 
-	class display d_primary, d_secondary;
-
-	d_primary.name = "Primary";
-	d_primary.cursor = 0;
-	d_primary.hidden = false;
-	d_primary.path = get_current_dir_name();
+	class display d_primary("Primary", get_current_dir_name());
 
 	d_primary.screen.create(y - 3, x / 2, 0, 0);
 	d_primary.list_files(NULL);
 	d_primary.update();
 
-	d_secondary.name = "Secondary";
-	d_secondary.cursor = 0;
-	d_secondary.hidden = false;
-	d_secondary.path = get_current_dir_name();
+	class display d_secondary("Secondary", get_current_dir_name());
 	d_secondary.path.append("/");
 	d_secondary.path.append(d_primary.file_list[0].c_str());
 
@@ -44,21 +35,17 @@ int main(int argc, char *argv[])
 	d_secondary.list_files(NULL);
 	d_secondary.update();
 
-	class path cpath;
+	class cpath cpath(get_current_dir_name(), getenv("USER"),
+			  getenv("HOSTNAME"));
 
 	cpath.screen.create(3, (x / 100) * 140, y - 3, 0);
-
-	cpath.prefix = getenv("USER");
-	cpath.prefix.append("@");
-	cpath.prefix.append(getenv("HOSTNAME"));
-
 	cpath.update();
 
-	class counter counter;
+	class counter counter(0, d_primary.file_list.size());
 	counter.screen.create(3, (x / 100) * 30, y - 3, x - (x / 100) * 30);
-	counter.cursor = 0;
-	counter.ammount = d_primary.file_list.size();
 	counter.update();
+
+	class act_list act_list;
 
 	char key;
 	while ((key = wgetch(d_primary.screen.screen)) != 'q') {
@@ -109,7 +96,13 @@ int main(int argc, char *argv[])
 			d_primary.hidden = !d_primary.hidden;
 			d_primary.list_files(NULL);
 			break;
+		case ' ':
+			act_list.list.push_back(
+				d_primary.file_list[d_primary.cursor]);
+			act_list.list_marks.push_back(d_primary.cursor);
+			break;
 		}
+
 		d_primary.update();
 
 		d_secondary.path = get_current_dir_name();
@@ -119,6 +112,10 @@ int main(int argc, char *argv[])
 
 		d_secondary.list_files(NULL);
 		d_secondary.update();
+
+		act_list.display_mark(d_primary.screen.screen,
+				      d_primary.file_list.size(),
+				      d_primary.cursor);
 	}
 
 	delwin(d_primary.screen.screen);

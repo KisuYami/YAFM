@@ -5,6 +5,7 @@
 #include <string>
 
 #include <stdio.h>
+#include <string.h>
 #include <dirent.h>
 #include <unistd.h>
 #include <sys/types.h>
@@ -48,6 +49,15 @@ class display {
 
 	class screen screen;
 
+	display(std::string n_name, char *n_path)
+	{
+		cursor = 0;
+		hidden = false;
+
+		name = n_name;
+		path = n_path;
+	}
+
 	void update()
 	{
 		wclear(screen.screen);
@@ -58,11 +68,11 @@ class display {
 		     ++i) {
 			if (i == cursor) {
 				wattron(screen.screen, A_REVERSE);
-				mvwprintw(screen.screen, i - cursor + 1, 2,
+				mvwprintw(screen.screen, i - cursor + 1, 4,
 					  file_list[i].c_str());
 				wattroff(screen.screen, A_REVERSE);
 			} else
-				mvwprintw(screen.screen, i - cursor + 1, 2,
+				mvwprintw(screen.screen, i - cursor + 1, 4,
 					  file_list[i].c_str());
 		}
 
@@ -87,12 +97,20 @@ class display {
 	}
 };
 
-class path {
+class cpath {
     public:
 	std::string prefix;
 	std::string path;
 
 	class screen screen;
+	cpath(std::string n_path, std::string username, std::string hostname)
+	{
+		path = n_path;
+
+		prefix = username;
+		prefix.append("@");
+		prefix.append(hostname);
+	}
 
 	void update(void)
 	{
@@ -112,6 +130,11 @@ class counter {
 	int ammount;
 
 	class screen screen;
+	counter(int n_cursor, int n_ammount)
+	{
+		cursor = n_cursor;
+		ammount = n_ammount;
+	}
 
 	void update(void)
 	{
