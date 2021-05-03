@@ -2,28 +2,58 @@
 #define INTERACTION_H_
 
 #include <cstddef>
+#include <iterator>
+#include <unistd.h>
 #include <vector>
 #include <string>
 
 #include <stdio.h>
 #include <ncurses.h>
 
+#include "screen.hh"
+
 class act_list {
     public:
 	std::vector<std::string> list;
-	std::vector<int> list_marks;
+	class screen screen;
 
-	void display_mark(WINDOW *screen, size_t ammount, size_t cursor)
+	void display_mark(void)
 	{
-		if (list.size() <= 0 || list_marks.size() <= 0)
+		wclear(screen.screen);
+
+		box(screen.screen, 0, 0);
+		mvwprintw(screen.screen, 0, 3, "Clipboard");
+
+		wrefresh(screen.screen);
+
+		if (list.size() <= 0)
 			return;
 
-		for (int i = cursor; i < ammount; i++) {
-			if ((i - cursor) == list_marks[i])
-				mvwprintw(screen, i + 1, 1, "->");
-		}
+		for (int i = 0; i < list.size(); ++i)
+			mvwprintw(screen.screen, i + 1, 2, "%s",
+				  list[i].c_str());
 
-		wrefresh(screen);
+		wrefresh(screen.screen);
+	}
+
+	void add(std::string file_name, size_t cursor)
+	{
+		for (auto i = list.begin(); i < list.end(); ++i) {
+			std::string buf;
+
+			buf = get_current_dir_name();
+			buf += "/";
+			buf += file_name;
+			if (*i == buf) {
+				list.erase(i);
+				return;
+			}
+		}
+		std::string buf;
+		buf = get_current_dir_name();
+		buf += "/";
+		buf += file_name;
+		list.push_back(buf);
 	}
 
 	void yank(char *file)

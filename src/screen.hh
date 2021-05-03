@@ -68,11 +68,11 @@ class display {
 		     ++i) {
 			if (i == cursor) {
 				wattron(screen.screen, A_REVERSE);
-				mvwprintw(screen.screen, i - cursor + 1, 4,
+				mvwprintw(screen.screen, i - cursor + 1, 3,
 					  file_list[i].c_str());
 				wattroff(screen.screen, A_REVERSE);
 			} else
-				mvwprintw(screen.screen, i - cursor + 1, 4,
+				mvwprintw(screen.screen, i - cursor + 1, 3,
 					  file_list[i].c_str());
 		}
 

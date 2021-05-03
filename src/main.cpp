@@ -21,22 +21,22 @@ int main(int argc, char *argv[])
 	int y, x;
 	getmaxyx(stdscr, y, x);
 
-	class display d_primary("Primary", get_current_dir_name());
+	class display d_primary("Main", get_current_dir_name());
 
 	d_primary.screen.create(y - 3, x / 2, 0, 0);
 	d_primary.list_files(NULL);
 	d_primary.update();
 
-	class display d_secondary("Secondary", get_current_dir_name());
-	d_secondary.path.append("/");
-	d_secondary.path.append(d_primary.file_list[0].c_str());
+	class display d_secondary("Preview", get_current_dir_name());
 
-	d_secondary.screen.create(y - 3, x / 2, 0, x / 2);
+	d_secondary.path.append("/");
+	d_secondary.path.append(d_primary.file_list[0]);
+
+	d_secondary.screen.create(y / 2, x / 2, 0, x / 2);
 	d_secondary.list_files(NULL);
 	d_secondary.update();
 
-	class cpath cpath(get_current_dir_name(), getenv("USER"),
-			  getenv("HOSTNAME"));
+	class cpath cpath(get_current_dir_name());
 
 	cpath.screen.create(3, (x / 100) * 140, y - 3, 0);
 	cpath.update();
@@ -46,6 +46,8 @@ int main(int argc, char *argv[])
 	counter.update();
 
 	class act_list act_list;
+	act_list.screen.create((y / 2) - 3, x / 2, y / 2, x / 2);
+	act_list.display_mark();
 
 	char key;
 	while ((key = wgetch(d_primary.screen.screen)) != 'q') {
@@ -97,9 +99,12 @@ int main(int argc, char *argv[])
 			d_primary.list_files(NULL);
 			break;
 		case ' ':
-			act_list.list.push_back(
-				d_primary.file_list[d_primary.cursor]);
-			act_list.list_marks.push_back(d_primary.cursor);
+			act_list.add(d_primary.file_list[d_primary.cursor],
+				     d_primary.cursor);
+			act_list.display_mark();
+			break;
+		case 'c':
+			act_list.list.clear();
 			break;
 		}
 
@@ -112,10 +117,6 @@ int main(int argc, char *argv[])
 
 		d_secondary.list_files(NULL);
 		d_secondary.update();
-
-		act_list.display_mark(d_primary.screen.screen,
-				      d_primary.file_list.size(),
-				      d_primary.cursor);
 	}
 
 	delwin(d_primary.screen.screen);
