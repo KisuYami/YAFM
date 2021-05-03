@@ -63,8 +63,8 @@ class display {
 		wclear(screen.screen);
 		box(screen.screen, 0, 0);
 
-		for (int i = cursor;
-		     (i < file_list.size()) && ((i - cursor + 1) < screen.x[1]);
+		for (int i = cursor; (i < file_list.size()) &&
+				     ((i - cursor + 1) < screen.x[1] - 1);
 		     ++i) {
 			if (i == cursor) {
 				wattron(screen.screen, A_REVERSE);
@@ -103,13 +103,13 @@ class cpath {
 	std::string path;
 
 	class screen screen;
-	cpath(std::string n_path, std::string username, std::string hostname)
+	cpath(std::string n_path)
 	{
 		path = n_path;
 
-		prefix = username;
+		prefix = getenv("USER");
 		prefix.append("@");
-		prefix.append(hostname);
+		prefix.append(getenv("HOSTNAME"));
 	}
 
 	void update(void)
