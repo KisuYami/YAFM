@@ -8,7 +8,10 @@
 #include <string>
 
 #include <stdio.h>
+#include <unistd.h>
+#include <stdlib.h>
 #include <ncurses.h>
+#include <sys/wait.h>
 
 #include "screen.hh"
 
@@ -56,24 +59,56 @@ class act_list {
 		list.push_back(buf);
 	}
 
-	void yank(char *file)
+	void action(char op)
 	{
-		printf("STUB: YANK");
+		switch (op) {
+		case 'r':
+			list.insert(list.begin(), "-r");
+			list.insert(list.begin(), "rm");
+			break;
+		case 'c':
+			list.insert(list.begin(), "-r");
+			list.insert(list.begin(), "cp");
+			list.push_back(get_current_dir_name());
+			break;
+		case 'm':
+			list.insert(list.begin(), "mv");
+			list.push_back(get_current_dir_name());
+			break;
+		}
+
+		char **argv = act_list::argv();
+
+		switch (fork()) {
+		case 0:
+			execvp(*argv, argv);
+			exit(-1);
+		default:
+			int status;
+			wait(&status);
+		}
+
+		list.clear();
+		display_mark();
+		act_list::free_argv(argv);
 	}
 
-	void move(char *file)
+    private:
+	char **argv(void)
 	{
-		printf("STUB: MOVE");
-	}
+		char **argv = (char **)malloc(list.size() * sizeof(char **));
 
-	void remove(char *file)
-	{
-		printf("STUB: REMOVE");
-	}
+		for (int i = 0; i < list.size(); ++i)
+			argv[i] = strdup(list[i].c_str());
 
-	void paste(char *file)
+		return argv;
+	}
+	void free_argv(char **argv)
 	{
-		printf("STUB: PASTE");
+		for (int i = 0; i < list.size(); ++i)
+			free(argv[i]);
+
+		free(argv);
 	}
 };
 

@@ -6,6 +6,7 @@
 #include "screen.hh"
 #include "interaction.hh"
 #include <ncurses/ncurses.h>
+#include <vector>
 
 int main(int argc, char *argv[])
 {
@@ -102,6 +103,20 @@ int main(int argc, char *argv[])
 			act_list.add(d_primary.file_list[d_primary.cursor],
 				     d_primary.cursor);
 			act_list.display_mark();
+			break;
+		case 'P':
+			act_list.action('c');
+			d_primary.list_files(NULL);
+			break;
+
+		case 'd':
+			act_list.action('m');
+			d_primary.list_files(NULL);
+			break;
+
+		case 'D':
+			act_list.action('r');
+			d_primary.list_files(NULL);
 			break;
 		case 'c':
 			act_list.list.clear();
